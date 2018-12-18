@@ -1,0 +1,15 @@
+{
+  "name": "transaction-notary",
+  "version": "0.1.0",
+  "scripts": {
+    "postinstall": "node ./scripts/install.js",
+    "build": "cd ./api && npm run build",
+    "test": "cross-env TEST=test-all npm run test-docker-run",
+    "test-ci": "cross-env TEST=test-all-ci npm run test-docker-run",
+    "test-docker-run": "cd ./docker/compose/Test && docker-compose up --build --abort-on-container-exit",
+    "package": "cd ./api && npm run package"
+  },
+  "devDependencies": {
+    "cross-env": "^5.2.0"
+  }
+}

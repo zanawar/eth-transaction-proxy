@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+      "target": "es2017",
+      "module": "commonjs",
+      "allowJs": false,
+      "declaration": true,
+      "newLine": "LF",
+      "preserveConstEnums": true,
+      "sourceMap": true,
+      "moduleResolution": "node",
+      "noImplicitReturns": true,
+      "noUnusedLocals": true,
+      "strict": true
+  },
+  "compileOnSave": true,
+}

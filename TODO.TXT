@@ -1,0 +1,30 @@
+- CI
+  - right now: can't run within docker and report back the XML result files
+    - reson: Collision between ts-node typescript runtime compiler/runner & mocha-reporter. The result is node's limit of event subscribers (file system events) is exceeded. Hard cap at 10, tried changing but no luck...
+    - possible fix: run outside docker?
+    - if fixed: get xml output from all tests and CI is unblocked
+
+- Folder ABI Source Tests
+  - doesn't run on windows. reasons is because it manipulates the file system, and windows perms don't like node doing this... couldn't find a work around.
+  - maybe a problem with rimraf?
+  - maybe don't use ts-node/register, build to JS then run the tests...?
+
+- Blob Tests
+  - run against blob emulator instead of live blob in azure
+  - improve coverage, it only does happy path right now...
+
+- Transaction Notary Error Handling
+  - Better solidity method overloading errors
+
+- Functions
+  - Use notary api source locally instead of via NPM package
+  - more error handling in functions to better understand what's going wrong
+  - investigate ABI caching (move new ContractRepo outside exports?)
+    - how would this handle threading, no locks
+
+- standard OS stuff
+  - contribution guidelines
+  - integration guidelines
+    - how someone could use the function as a service themselves
+    - how to create their own service with the api (point to examples/example.ts, maybe outside of dist for npm package?)
+  - better readme + one for the API package

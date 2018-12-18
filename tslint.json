@@ -1,0 +1,10 @@
+{
+  "extends": ["tslint:recommended"],
+  "rules": {
+    "no-empty": false,
+    "no-var-requires": false,
+    "array-type": [true, "array"],
+    "ordered-imports": false,
+    "object-literal-sort-keys": false
+  }
+}
