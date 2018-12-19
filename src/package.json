@@ -1,0 +1,24 @@
+{
+  "name": "eth-transaction-proxy",
+  "version": "0.1.0-preview",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "tslint": "tslint -p . -c tslint.json --exclude examples/**/*.ts --exclude tests/**/*.ts",
+    "tsc": "tsc --skipLibCheck",
+    "build": "npm run tslint && npm run tsc && node ./tools/copy-distribution-files.js"
+  },
+  "devDependencies": {
+    "@types/find": "^0.2.1",
+    "@types/node": "^10.11.7",
+    "@types/web3": "1.0.12",
+    "ts-node": "^7.0.0",
+    "tslint": "^5.11.0",
+    "typescript": "^3.0.1"
+  },
+  "dependencies": {
+    "azure-storage": "^2.10.2",
+    "find": "^0.2.9",
+    "web3": "^1.0.0-beta.36"
+  }
+}
