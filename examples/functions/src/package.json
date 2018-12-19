@@ -1,0 +1,7 @@
+{
+  "name": "transaction-notary-create-transaction",
+  "version": "0.0.1",
+  "dependencies": {
+    "transaction-notary-api": "latest"
+  }
+}
