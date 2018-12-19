@@ -2,7 +2,7 @@ import "mocha";
 import * as assert from "assert";
 import { Config } from "./setup";
 import { MethodTests } from "./methodTests";
-import { IViewConfig} from "../../api/lib/interfaces/IViewConfig";
+import { IViewConfig} from "eth-transaction-proxy/lib/interfaces/IViewConfig";
 
 export const test = (config: Config) => {
   describe("submitView(config)", () => {

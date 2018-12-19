@@ -1,8 +1,8 @@
 import "mocha";
 import * as assert from "assert";
 import * as contractRepo from "./setup";
-import { ABICache } from "../../api/lib/internal/ABICache";
-import { FileABIMetadata } from "../../api/lib/abi-sources/folder/FileABIMetadata";
+import { ABICache } from "eth-transaction-proxy/lib/internal/ABICache";
+import { FileABIMetadata } from "eth-transaction-proxy/lib/abi-sources/folder/FileABIMetadata";
 import { testBedContract, migrationContract } from "../common.setup";
 
 const buildDirectory0 = "./build/api.folder0/";

@@ -4,8 +4,7 @@ import * as ganache from "ganache-core";
 import * as common from "../common.setup";
 import { testBedContract } from "../common.setup";
 import * as contractRepo from "../api.contractRepo/setup";
-import { ContractRepo } from "../../api/lib";
-import { TransactionNotary } from "../../api/lib";
+import { TransactionNotary, ContractRepo } from "eth-transaction-proxy";
 
 export class TestTransaction {
   package: any;

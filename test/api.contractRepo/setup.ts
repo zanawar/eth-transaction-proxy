@@ -1,6 +1,6 @@
 import * as folder from "../api.folder/setup";
-import { ContractRepo, FolderABISource } from "../../api/lib";
-import { ABICache } from "../../api/lib/internal/ABICache";
+import { ContractRepo, FolderABISource } from "eth-transaction-proxy";
+import { ABICache } from "eth-transaction-proxy/lib/internal/ABICache"; 
 
 export let folderABISource0: FolderABISource;
 export let folderABISource1: FolderABISource;

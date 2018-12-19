@@ -1,6 +1,6 @@
 import "mocha";
 import * as assert from "assert";
-import { BlobABISource } from "../../api/lib";
+import { BlobABISource } from "eth-transaction-proxy";
 
 const containerName = "testcontracts";
 const contractName = "Migrations";

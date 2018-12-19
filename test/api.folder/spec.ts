@@ -4,7 +4,7 @@ import * as fs from "fs";
 import * as mkdirp from "mkdirp";
 import * as assert from "assert";
 import * as folder from "./setup";
-import { FolderABISource } from "../../api/lib";
+import { FolderABISource } from "eth-transaction-proxy";
 import { testBedContract, migrationContract } from "../common.setup";
 
 const buildDirectory = "./build/api.folder/";

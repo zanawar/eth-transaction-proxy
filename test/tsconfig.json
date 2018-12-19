@@ -1,8 +1,17 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
-    "outDir": "./dist/",
-    "declarationDir": "./dist/"
+    "outDir": "../bin/test",
+    "declarationDir": "../bin/test",
+    "baseUrl": "./",
+    "paths": {
+      "eth-transaction-proxy": [
+        "../bin/eth-transaction-proxy"
+      ],
+      "eth-transaction-proxy/*": [
+        "../bin/eth-transaction-proxy/*"
+      ]
+    }
   },
   "exclude": [
     "node_modules"

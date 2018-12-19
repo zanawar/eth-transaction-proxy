@@ -5,7 +5,7 @@ import { Config } from "./setup";
 import * as createTransaction from "./createTransaction";
 import * as submitTransaction from "./submitTransaction";
 import * as submitView from "./submitView";
-import { TransactionNotary } from "../../api/lib";
+import { TransactionNotary } from "eth-transaction-proxy";
 
 let config = new Config();
 
