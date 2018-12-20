@@ -1,57 +1,98 @@
-import { IABISource } from "./interfaces/IABISource";
-import { ABICache } from "./internal/ABICache";
+import { IContract } from "./interfaces/IContract";
+import { IContractSource } from "./interfaces/IContractSource";
+import { ContractCache } from "./internal/ContractCache";
+
+export type QueryCallback = (contract: IContract) => any;
 
 export class ContractRepo {
-  protected cache: ABICache = new ABICache();
-  protected sources: IABISource[] = [ ];
+  protected _cache: ContractCache = new ContractCache();
+  protected _sources: IContractSource[] = [ ];
 
-  constructor(abiSources?: IABISource[]) {
-    if (abiSources) {
-      this.sources = abiSources;
+  constructor(contractSources?: IContractSource[]) {
+    if (contractSources) {
+      this._sources = contractSources;
     }
   }
 
-  public getSources(): ReadonlyArray<IABISource> {
-    return this.sources;
+  public getSources(): ReadonlyArray<IContractSource> {
+    return this._sources;
   }
 
-  public async getContractABI(contractName: string): Promise<any> {
+  public async get(contractName: string): Promise<IContract> {
     this.verifySources();
 
-    // check cache
-    let abi = await this.cache.tryGetABI(contractName);
+    // Pull existing version of contract from cache
+    if (this._cache.exists(contractName)) {
+      return await this._cache.get(contractName);
+    }
 
-    if (!abi) {
-      // go through each source and query
-      for (const source of this.sources) {
-        abi = await source.get(contractName);
+    const contracts = await this.querySourcesForContract(contractName);
 
-        if (abi) {
-          this.cache.addABI(abi);
-          return abi;
+    if (contracts.length > 1) {
+      throw new Error(`Found more than one contract with name ${contractName}`);
+    }
+
+    if (contractName.length == 0) {
+      throw new Error(`${contractName} could not be found.`);
+    }
+
+    return contracts[0];
+  }
+  
+  protected async querySourcesForContract(contractName : string, callback? : QueryCallback) : Promise<IContract[]> {
+    let found : IContract[] = [];
+    const queryPromises : Promise<IContract>[] = [];
+
+    for (const contractSource of this._sources) {
+      const getPromise = contractSource.get(contractName).then(
+        (contract : IContract) => {
+          if (contract) {
+            found.push(contract);
+            if (callback) {
+              callback(contract);
+            }
+          }
+
+          return contract;
         }
-      }
+      )
+      queryPromises.push(getPromise);
     }
 
-    return abi;
+    await Promise.all(queryPromises);
+
+    return found;
   }
 
-  public async cacheMetadata() {
+  public async clearCache() {
+    this._cache.clear()
+  }
+
+  public async precache(importABI? : boolean) {
     this.verifySources();
-    this.cache.clear();
 
-    for (const source of this.sources) {
-      const metadatas = await source.list();
+    const importPromises : Promise<any>[] = [];
 
-      metadatas.forEach((metadata) => {
-        this.cache.addMetadata(metadata);
+    for (const source of this._sources) {
+      const contracts = await source.list();
+
+      contracts.forEach((contract) => {
+        const cachedContract = this._cache.add(contract);
+        // Fetch the abi, which will cause it to be cached
+        if (importABI) {
+          importPromises.push(cachedContract.abi());
+        }
       });
+    }
+
+    if (importABI) {
+      await Promise.all(importPromises);
     }
   }
 
   private verifySources() {
-    if (this.sources.length === 0) {
-      throw new Error("Error: No ABISources added to the Contract Repo.");
+    if (this._sources.length === 0) {
+      throw new Error("No ABISources added to the Contract Repo.");
     }
   }
 }
