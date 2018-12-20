@@ -8,7 +8,7 @@ import { testBedContract, migrationContract } from "../common.setup";
 import * as path from "path";
 
 const buildDirectory = "./build/api.folder";
-let FolderContractSource: FolderContractSource;
+let folderSource: FolderContractSource;
 
 before(`Copying built contract ABIs to ${buildDirectory}...`, () => {
   return folder.setup(buildDirectory);
@@ -40,7 +40,7 @@ describe("FolderContractSource", () => {
 
     it("succeeds when directory is valid", () => {
       assert.doesNotThrow(() => {
-        FolderContractSource = new FolderContractSource(buildDirectory);
+        folderSource = new FolderContractSource(buildDirectory);
       });
     });
 
@@ -48,7 +48,7 @@ describe("FolderContractSource", () => {
   describe(".list", () => {
 
     it("should succeed in the normal case (flat directory, N valid files)", () => {
-      return FolderContractSource.list()
+      return folderSource.list()
         .then((metadatas: any) => {
           assert.equal(metadatas.length, 2);
 
@@ -65,7 +65,7 @@ describe("FolderContractSource", () => {
 
     it("should work if ABI json is on separate lines", () => {
       folder.insertABI(buildDirectory, "Test.json", { contractName: "Test" });
-      return FolderContractSource.list()
+      return folderSource.list()
         .then((metadatas: any) => {
           assert.equal(metadatas.length, 3);
 
@@ -87,7 +87,7 @@ describe("FolderContractSource", () => {
 
     it("should work if ABI json is all on one line", () => {
       folder.insertABI(buildDirectory, "Test.json", { contractName: "Test" }, false);
-      return FolderContractSource.list()
+      return folderSource.list()
         .then((metadatas: any) => {
           assert.equal(metadatas.length, 3);
 
@@ -109,7 +109,7 @@ describe("FolderContractSource", () => {
 
     it("should omit files that don't have contractName", () => {
       folder.insertABI(buildDirectory, "Test.json", {});
-      return FolderContractSource.list()
+      return folderSource.list()
         .then((metadatas: any) => {
           assert.equal(metadatas.length, 2);
 
@@ -129,7 +129,7 @@ describe("FolderContractSource", () => {
 
     it("should fail when file name != contractName", () => {
       folder.insertABI(buildDirectory, "Test.json", { contractName: "NotTest" });
-      return FolderContractSource.list()
+      return folderSource.list()
         .then((metadatas: any) => {
           assert.fail("One of the contractNames is incorrect, this should not succeed.");
         })
@@ -140,7 +140,7 @@ describe("FolderContractSource", () => {
 
     it("should be able to recurse subfolders", () => {
       folder.insertABI(`${buildDirectory}/test`, "Test.json", { contractName: "Test" });
-      return FolderContractSource.list()
+      return folderSource.list()
         .then((metadatas: any) => {
 
           let foundSubdirectoryContract = false;
@@ -163,7 +163,7 @@ describe("FolderContractSource", () => {
 
     it("should omit empty files", () => {
       folder.insertABI(buildDirectory, "Test.json", undefined);
-      return FolderContractSource.list()
+      return folderSource.list()
         .then((metadatas: any) => {
 
           const searchFile = path.resolve(`${buildDirectory}/Test.json`);
@@ -185,7 +185,7 @@ describe("FolderContractSource", () => {
   describe(".get(contractName)", () => {
 
     it("should succeed in the normal case (flat directory, 1 valid file)", () => {
-      return FolderContractSource.get(testBedContract)
+      return folderSource.get(testBedContract)
         .then((abi: any) => {
           assert.notEqual(abi, undefined);
           assert.equal(abi.contractName, testBedContract);
@@ -197,7 +197,7 @@ describe("FolderContractSource", () => {
     });
 
     it("should return undefined if contract doesn't exist", () => {
-      return FolderContractSource.get("Foo")
+      return folderSource.get("Foo")
         .then((abi: any) => {
           assert.equal(abi, undefined);
         })
@@ -208,7 +208,7 @@ describe("FolderContractSource", () => {
 
     it("should fail if more than one contract by the same name exists", () => {
       folder.insertABI(`${buildDirectory}/test`, "TestBed.json", { contractName: testBedContract });
-      return FolderContractSource.get(testBedContract)
+      return folderSource.get(testBedContract)
         .then((abi: any) => {
           assert.fail("There are multiple contracts by the same name, this should not succeed.");
         })
@@ -219,7 +219,7 @@ describe("FolderContractSource", () => {
 
     it("should fail when file name != contractName", () => {
       folder.insertABI(buildDirectory, "Test.json", { contractName: "NotTest" });
-      return FolderContractSource.get("Test")
+      return folderSource.get("Test")
         .then((abi: any) => {
           assert.fail("This shouldn't succeed, the names don't match.");
         })
@@ -230,7 +230,7 @@ describe("FolderContractSource", () => {
 
     it("should fail when file is empty", () => {
       folder.insertABI(buildDirectory, "Test.json", undefined);
-      return FolderContractSource.get("Test")
+      return folderSource.get("Test")
         .then((abi: any) => {
           assert.fail("This shouldn't succeed, the file is empty.");
         })
@@ -241,7 +241,7 @@ describe("FolderContractSource", () => {
 
     it("should fail when missing contractName", () => {
       folder.insertABI(buildDirectory, "Test.json", { });
-      return FolderContractSource.get("Test")
+      return folderSource.get("Test")
         .then((abi: any) => {
           assert.fail("This shouldn't succeed, the file is empty.");
         })
@@ -253,7 +253,7 @@ describe("FolderContractSource", () => {
     it("should fail when json is invalid", () => {
       mkdirp.sync(buildDirectory);
       fs.writeFileSync(`${buildDirectory}/Test.json`, '{contractName: "Test", abi: {}');
-      return FolderContractSource.get("Test")
+      return folderSource.get("Test")
         .then((abi: any) => {
           assert.fail("This shouldn't succeed, the json is invalid.");
         })

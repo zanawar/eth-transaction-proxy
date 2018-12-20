@@ -2,7 +2,7 @@ import "mocha";
 import * as assert from "assert";
 import * as contractRepo from "./setup";
 import { ABICache } from "eth-transaction-proxy/lib/internal/ABICache";
-import { FileContract } from "eth-transaction-proxy/lib/abi-sources/folder/FileContract";
+import { FileContract } from "eth-transaction-proxy/lib/contract-sources/filesystem/FileContract";
 import { testBedContract, migrationContract } from "../common.setup";
 
 const buildDirectory0 = "./build/api.folder0/";

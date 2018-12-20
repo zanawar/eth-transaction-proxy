@@ -5,7 +5,7 @@ import { AzureBlobContractSource } from "eth-transaction-proxy";
 const containerName = "testcontracts";
 const contractName = "Migrations";
 let connectionString = "";
-let AzureBlobContractSource: AzureBlobContractSource;
+let contractSource: AzureBlobContractSource;
 
 before("Setup blob storage connector", () => {
     let env = process.env["TESTING_BLOB_STORAGE"];
@@ -15,7 +15,7 @@ before("Setup blob storage connector", () => {
         throw Error("You must setup the environment variable 'TESTING_BLOB_STORAGE' to connect to blob storage for this test suite.");
     }
 
-    AzureBlobContractSource = new AzureBlobContractSource(connectionString, containerName);
+    contractSource = new AzureBlobContractSource(connectionString, containerName);
 });
 
 describe("AzureBlobContractSource", () => {
@@ -38,9 +38,9 @@ describe("AzureBlobContractSource", () => {
         it("container does not exist", () => {
 
             const containerName = 'doesnotexist';
-            AzureBlobContractSource = new AzureBlobContractSource(connectionString, containerName);
+            contractSource = new AzureBlobContractSource(connectionString, containerName);
 
-            return AzureBlobContractSource.validateConnection()
+            return contractSource.validateConnection()
             .then((result) => {
                 assert.equal(result, false);
             })
@@ -48,9 +48,9 @@ describe("AzureBlobContractSource", () => {
         });
 
         it("container does exist", () => {
-            AzureBlobContractSource = new AzureBlobContractSource(connectionString, containerName);
+            contractSource = new AzureBlobContractSource(connectionString, containerName);
 
-            return AzureBlobContractSource.validateConnection()
+            return contractSource.validateConnection()
             .then((result) => {
                 assert.equal(result, true);
             })
@@ -60,7 +60,7 @@ describe("AzureBlobContractSource", () => {
 
     describe("list", () => {
         it("should list 2 abi metadatas", () => {
-            return AzureBlobContractSource.list().then((metadatas) => {
+            return contractSource.list().then((metadatas) => {
                 assert.equal(metadatas.length, 2);
             });
         });
@@ -68,7 +68,7 @@ describe("AzureBlobContractSource", () => {
 
     describe("get", () => {
         it("should get a specific ABI", () => {
-            return AzureBlobContractSource.get(contractName).then((abi) => {
+            return contractSource.get(contractName).then((abi) => {
                 assert(Object.keys(abi).length > 0);
             });
         });
@@ -77,7 +77,7 @@ describe("AzureBlobContractSource", () => {
             const contractName = "doesnotexist";
 
             let didFail = false;
-            return AzureBlobContractSource.get(contractName).then((abi) => {
+            return contractSource.get(contractName).then((abi) => {
 
             }).catch((err: Error) => {
                 didFail = true;
