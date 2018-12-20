@@ -270,71 +270,7 @@ describe("ContractRepo", () => {
     });
 
   });
-  describe(".cacheABIJson", () => {
 
-    it("should fail when 0 sources are present", () => {
-      return contractRepoS0.cacheABIJson()
-        .then(() => {
-          assert.fail("Error: This shouldn't succeed.");
-        })
-        .catch((err: Error) => { });
-    });
-
-    it("succeeds with 1 source present & cache is correct", () => {
-      return contractRepoS1.cacheABIJson()
-        .then(() => {
-          const cache = contractRepoS1.getCacheInternal();
-          const cacheMap = cache.getMap();
-          const migrations = cacheMap.get(migrationContract);
-          const testBed = cacheMap.get(testBedContract);
-          assert.equal(cacheMap.size, 2);
-          assert.notEqual(migrations, undefined);
-          assert.notEqual(testBed, undefined);
-          if (migrations) {
-            assert.equal(migrations.getContractName(), migrationContract);
-          }
-          if (testBed) {
-            assert.equal(testBed.getContractName(), testBedContract);
-          }
-        })
-        .catch((err: Error) => {
-          assert.fail(err.message);
-        });
-    });
-
-    it("succeeds with 3 sources present & cache is correct", () => {
-      return contractRepoS3.cacheABIJson()
-        .then(() => {
-          const cache = contractRepoS3.getCacheInternal();
-          const cacheMap = cache.getMap();
-          const migrations = cacheMap.get(migrationContract);
-          const testBed = cacheMap.get(testBedContract);
-          const test = cacheMap.get("Test");
-          const testAgain = cacheMap.get("TestAgain");
-          assert.equal(cacheMap.size, 4);
-          assert.notEqual(migrations, undefined);
-          assert.notEqual(testBed, undefined);
-          assert.notEqual(test, undefined);
-          assert.notEqual(testAgain, undefined);
-          if (migrations) {
-            assert.equal(migrations.getContractName(), migrationContract);
-          }
-          if (testBed) {
-            assert.equal(testBed.getContractName(), testBedContract);
-          }
-          if(test) {
-            assert.equal(test.getContractName(), "Test");
-          }
-          if (testAgain) {
-            assert.equal(testAgain.getContractName(), "TestAgain");
-          }
-        })
-        .catch((err: Error) => {
-          assert.fail(err.message);
-        });
-    });
-
-  });
   describe(".getContractABI(contractName) post caching", () => {
 
     it("should succeed with 1 source location, and cache should remain unchanged", () => {

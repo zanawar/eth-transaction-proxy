@@ -24,7 +24,7 @@ export class ContractRepo {
     if (!abi) {
       // go through each source and query
       for (const source of this.sources) {
-        abi = await source.getABI(contractName);
+        abi = await source.get(contractName);
 
         if (abi) {
           this.cache.addABI(abi);
@@ -41,23 +41,10 @@ export class ContractRepo {
     this.cache.clear();
 
     for (const source of this.sources) {
-      const metadatas = await source.getABIMetadatas();
+      const metadatas = await source.list();
 
       metadatas.forEach((metadata) => {
         this.cache.addMetadata(metadata);
-      });
-    }
-  }
-
-  public async cacheABIJson() {
-    this.verifySources();
-    this.cache.clear();
-
-    for (const source of this.sources) {
-      const abis = await source.getABIs();
-
-      abis.forEach((abi) => {
-        this.cache.addABI(abi);
       });
     }
   }

@@ -58,21 +58,17 @@ describe("BlobABISource", () => {
         });
     });
 
-    describe("functions", () => {
-        it("should get 2 abi metadatas", () => {
-            return blobABISource.getABIMetadatas().then((metadatas) => {
+    describe("list", () => {
+        it("should list 2 abi metadatas", () => {
+            return blobABISource.list().then((metadatas) => {
                 assert.equal(metadatas.length, 2);
             });
         });
+    });
 
-        it("should get 2 abi contracts", () => {
-            return blobABISource.getABIs().then((abis) => {
-                assert.equal(abis.length, 2);
-            });
-        });
-
+    describe("get", () => {
         it("should get a specific ABI", () => {
-            return blobABISource.getABI(contractName).then((abi) => {
+            return blobABISource.get(contractName).then((abi) => {
                 assert(Object.keys(abi).length > 0);
             });
         });
@@ -81,7 +77,7 @@ describe("BlobABISource", () => {
             const contractName = "doesnotexist";
 
             let didFail = false;
-            return blobABISource.getABI(contractName).then((abi) => {
+            return blobABISource.get(contractName).then((abi) => {
 
             }).catch((err: Error) => {
                 didFail = true;

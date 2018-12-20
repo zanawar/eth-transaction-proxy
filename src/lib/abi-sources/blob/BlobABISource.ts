@@ -3,7 +3,7 @@ import { IABIMetadata } from "../../interfaces/IABIMetadata";
 import { IABISource } from "../../interfaces/IABISource";
 import { BlobABIMetadata } from "./BlobABIMetadata";
 import { BlobContract } from "./BlobContract";
-import { containerExists, parseABI, readAllContracts, readContract, tryGetABIMetadata } from "./BlobUtils";
+import { containerExists, readAllContracts, readContract, tryGetABIMetadata } from "./BlobUtils";
 
 export class BlobABISource implements IABISource {
     private blobService: storage.BlobService;
@@ -35,7 +35,7 @@ export class BlobABISource implements IABISource {
     }
 
     // loop through all contracts and gather the metadata for each
-    public getABIMetadatas(): Promise<IABIMetadata[]> {
+    public list(): Promise<IABIMetadata[]> {
         return new Promise((resolve, reject) => {
             const metadatas = [] as BlobABIMetadata[];
 
@@ -58,32 +58,8 @@ export class BlobABISource implements IABISource {
         });
     }
 
-    // loop through all contracts and gather the abi's for each
-    public getABIs(): Promise<any[]> {
-        return new Promise((resolve, reject) => {
-            const jsons = [] as any[];
-
-            // read all contracts (blobs) in the specified container name, pass in the "false" flag to
-            // read the full contract for gathering the ABI
-            readAllContracts(this.blobService, this.containerName, false).then((data: BlobContract[]) => {
-                for (const blobContract of data) {
-                    try {
-                        const json = parseABI(blobContract);
-                        jsons.push(json);
-                    } catch (e) {
-                        // TODO: Log this
-                    }
-                }
-
-                resolve(jsons);
-            }).catch((e: any) => {
-                reject(e);
-            });
-        });
-    }
-
     // gather the abi for one contract specifically
-    public getABI(contractName: string): Promise<any> {
+    public get(contractName: string): Promise<IABIMetadata> {
         return new Promise((resolve, reject) => {
 
             // read a specific contract (blob) in the specified container name, pass in the
@@ -91,8 +67,10 @@ export class BlobABISource implements IABISource {
             readContract(this.blobService, this.containerName, `${contractName}.json`, false).then(
                 (blobContract: BlobContract) => {
                 if (blobContract) {
-                    const json = parseABI(blobContract);
-                    resolve(json);
+                    const metadata = tryGetABIMetadata(this.blobService, blobContract);
+                    if (metadata !== undefined) {
+                        resolve(metadata);
+                    }
                 } else {
                     reject(`No item in blob found with the name ${contractName}.json`);
                 }
