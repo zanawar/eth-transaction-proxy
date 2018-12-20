@@ -1,4 +1,4 @@
 export interface IContract {
-  contractName: string;
+  name() : string;
   abi(): Promise<any>;
 }

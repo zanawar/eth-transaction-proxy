@@ -20,4 +20,8 @@ export class FileContract implements IContract {
       }
     });
   }
+
+  public name(): string {
+    return this.contractName;
+  }
 }

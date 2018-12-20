@@ -14,6 +14,10 @@ export class AzureBlobContract implements IContract {
     this.blobService = blobService;
   }
 
+  public name(): string {
+    return this.contractName;
+  }
+
   public abi(): Promise<any> {
     return new Promise((resolve, reject) => {
 
