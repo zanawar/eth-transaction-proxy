@@ -1,11 +1,11 @@
 import * as fs from "fs";
 import { IContract } from "../../interfaces/IContract";
-import { IABISource } from "../../interfaces/IABISource";
+import { IContractSource } from "../../interfaces/IContractSource";
 import { FileContract } from "./FileContract";
 import { findUniqueFileByName, getFilePaths, tryGetContractMetadata } from "./FileUtils";
 
 // Note: Requires that the fileName == contractName
-export class FolderContractSource implements IABISource {
+export class FolderContractSource implements IContractSource {
   private directory: string;
 
   constructor(directory: string) {

@@ -1,11 +1,11 @@
 import * as storage from "azure-storage";
 import { IContract } from "../../interfaces/IContract";
-import { IABISource } from "../../interfaces/IABISource";
+import { IContractSource } from "../../interfaces/IContractSource";
 import { AzureBlobContract } from "./AzureBlobContract";
 import { BlobContract } from "./BlobContract";
 import { containerExists, readAllContracts, readContract, tryGetABIMetadata } from "./BlobUtils";
 
-export class AzureBlobContractSource implements IABISource {
+export class AzureBlobContractSource implements IContractSource {
     private blobService: storage.BlobService;
     private containerName: string;
 
