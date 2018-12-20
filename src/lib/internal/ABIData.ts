@@ -1,11 +1,11 @@
 import * as assert from "assert";
-import { IABIMetadata } from "../interfaces/IABIMetadata";
+import { IContract } from "../interfaces/IContract";
 
 export class ABIData {
   private abi?: any;
-  private metadata?: IABIMetadata;
+  private metadata?: IContract;
 
-  constructor(abi?: any, metadata?: IABIMetadata) {
+  constructor(abi?: any, metadata?: IContract) {
     this.abi = abi;
     this.metadata = metadata;
 

@@ -1,7 +1,7 @@
-import { IABIMetadata } from "../../interfaces/IABIMetadata";
+import { IContract } from "../../interfaces/IContract";
 import { parseABI } from "./FileUtils";
 
-export class FileABIMetadata implements IABIMetadata {
+export class FileABIMetadata implements IContract {
   public contractName: string;
   public filePath: string;
 

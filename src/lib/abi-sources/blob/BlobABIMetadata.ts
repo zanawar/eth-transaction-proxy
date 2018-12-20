@@ -1,9 +1,9 @@
 import * as storage from "azure-storage";
-import { IABIMetadata } from "../../interfaces/IABIMetadata";
+import { IContract } from "../../interfaces/IContract";
 import { BlobContract } from "./BlobContract";
 import { parseABI, readContract } from "./BlobUtils";
 
-export class BlobABIMetadata implements IABIMetadata {
+export class BlobABIMetadata implements IContract {
   public readonly containerName: string;
   public readonly contractName: string;
   public readonly blobService: storage.BlobService;

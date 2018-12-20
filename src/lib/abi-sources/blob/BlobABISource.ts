@@ -1,5 +1,5 @@
 import * as storage from "azure-storage";
-import { IABIMetadata } from "../../interfaces/IABIMetadata";
+import { IContract } from "../../interfaces/IContract";
 import { IABISource } from "../../interfaces/IABISource";
 import { BlobABIMetadata } from "./BlobABIMetadata";
 import { BlobContract } from "./BlobContract";
@@ -35,7 +35,7 @@ export class BlobABISource implements IABISource {
     }
 
     // loop through all contracts and gather the metadata for each
-    public list(): Promise<IABIMetadata[]> {
+    public list(): Promise<IContract[]> {
         return new Promise((resolve, reject) => {
             const metadatas = [] as BlobABIMetadata[];
 
@@ -59,7 +59,7 @@ export class BlobABISource implements IABISource {
     }
 
     // gather the abi for one contract specifically
-    public get(contractName: string): Promise<IABIMetadata> {
+    public get(contractName: string): Promise<IContract> {
         return new Promise((resolve, reject) => {
 
             // read a specific contract (blob) in the specified container name, pass in the

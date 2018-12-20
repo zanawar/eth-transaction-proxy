@@ -1,6 +1,6 @@
-import { IABIMetadata } from "./IABIMetadata";
+import { IContract } from "./IContract";
 
 export interface IABISource {
-  list(): Promise<IABIMetadata[]>;
-  get(contractName: string): Promise<IABIMetadata>;
+  list(): Promise<IContract[]>;
+  get(contractName: string): Promise<IContract>;
 }

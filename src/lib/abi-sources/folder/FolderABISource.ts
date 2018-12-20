@@ -1,5 +1,5 @@
 import * as fs from "fs";
-import { IABIMetadata } from "../../interfaces/IABIMetadata";
+import { IContract } from "../../interfaces/IContract";
 import { IABISource } from "../../interfaces/IABISource";
 import { FileABIMetadata } from "./FileABIMetadata";
 import { findUniqueFileByName, getFilePaths, tryGetABIMetadata } from "./FileUtils";
@@ -16,12 +16,12 @@ export class FolderABISource implements IABISource {
     this.directory = directory;
   }
 
-  public list(): Promise<IABIMetadata[]> {
+  public list(): Promise<IContract[]> {
 
     return new Promise((resolve, reject) => {
       return getFilePaths(this.directory)
         .then((filePaths: string[]) => {
-          const metadataPromises: Promise<IABIMetadata | undefined>[] = [];
+          const metadataPromises: Promise<IContract | undefined>[] = [];
 
           for (const filePath of filePaths) {
             metadataPromises.push(tryGetABIMetadata(filePath));
@@ -36,7 +36,7 @@ export class FolderABISource implements IABISource {
     });
   }
 
-  public get(contractName: string): Promise<IABIMetadata> {
+  public get(contractName: string): Promise<IContract> {
     // recurse down directories and try to find the file named ${contractName}.json
     return new Promise((resolve, reject) => {
       return findUniqueFileByName(this.directory, `${contractName}.json`)

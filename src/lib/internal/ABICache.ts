@@ -1,4 +1,4 @@
-import { IABIMetadata } from "../interfaces/IABIMetadata";
+import { IContract } from "../interfaces/IContract";
 import { ABIData } from "./ABIData";
 
 export class ABICache {
@@ -8,7 +8,7 @@ export class ABICache {
     return this.cache;
   }
 
-  public addMetadata(metadata: IABIMetadata) {
+  public addMetadata(metadata: IContract) {
     this.verifyUnique(metadata.contractName);
     this.cache.set(metadata.contractName, new ABIData(undefined, metadata));
   }
