@@ -1,27 +1,27 @@
 import { IContract } from "../interfaces/IContract";
 
 export class CachedContract implements IContract {
-  private _contract : IContract;
-  private _cachedABI : any;
+  private contract: IContract;
+  private cachedABI: any;
 
   constructor(contract: IContract) {
-    this._contract = contract;
-    this._cachedABI = null;
+    this.contract = contract;
+    this.cachedABI = null;
   }
 
-  public name() : string {
-    return this._contract.name();
+  public name(): string {
+    return this.contract.name();
   }
 
   public abi(): Promise<any> {
-    if (this._cachedABI) {
+    if (this.cachedABI) {
       return new Promise((resolve) => {
-        resolve(this._cachedABI);
+        resolve(this.cachedABI);
       });
     }
-    
-    return this._contract.abi().then((abi : any) => {
-      this._cachedABI = abi;
+
+    return this.contract.abi().then((abi: any) => {
+      this.cachedABI = abi;
       return abi;
     });
   }

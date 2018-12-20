@@ -8,12 +8,12 @@ export class ContractCache {
     return this.cache;
   }
 
-  public add(contract: IContract) : IContract {
+  public add(contract: IContract): IContract {
     if (this.exists(contract.name())) {
       throw new Error(`Error: Contract ${contract.name()} already exists in cache. Contracts must have unique names.`);
     }
 
-    const cachedContract = new CachedContract(contract)
+    const cachedContract = new CachedContract(contract);
     this.cache.set(contract.name(), cachedContract);
 
     return cachedContract;
@@ -26,10 +26,10 @@ export class ContractCache {
       return contract;
     }
 
-    throw new Error(`${contractName} not found in cache.`)
+    throw new Error(`${contractName} not found in cache.`);
   }
 
-  public exists(contractName: string) : boolean {
+  public exists(contractName: string): boolean {
     return this.cache.has(contractName);
   }
 
