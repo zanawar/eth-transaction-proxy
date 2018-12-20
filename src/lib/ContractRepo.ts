@@ -18,7 +18,7 @@ export class ContractRepo {
     return this._sources;
   }
 
-  public async get(contractName: string): Promise<IContract> {
+  public async getContract(contractName: string) : Promise<IContract> {
     this.verifySources();
 
     // Pull existing version of contract from cache
@@ -26,6 +26,25 @@ export class ContractRepo {
       return await this._cache.get(contractName);
     }
 
+    return await this.getAndCacheContract(contractName);
+  }
+
+  public async getContractABI(contractName : string) : Promise<any> {
+    this.verifySources();
+
+    let contract : IContract;
+
+    // Pull existing version of contract from cache
+    if (this._cache.exists(contractName)) {
+      contract = await this._cache.get(contractName);
+    } else {
+      contract = await this.getAndCacheContract(contractName);
+    }
+
+    return await contract.abi();
+  }
+
+  protected async getAndCacheContract(contractName : string) : Promise<IContract> {
     const contracts = await this.querySourcesForContract(contractName);
 
     if (contracts.length > 1) {
@@ -36,7 +55,8 @@ export class ContractRepo {
       throw new Error(`${contractName} could not be found.`);
     }
 
-    return contracts[0];
+    const contract = contracts[0];
+    return this._cache.add(contract);
   }
   
   protected async querySourcesForContract(contractName : string, callback? : QueryCallback) : Promise<IContract[]> {
