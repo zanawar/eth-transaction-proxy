@@ -1,13 +1,13 @@
 import "mocha";
-import * as rimraf from "rimraf";
 import * as fs from "fs";
 import * as mkdirp from "mkdirp";
 import * as assert from "assert";
 import * as folder from "./setup";
 import { FolderABISource } from "eth-transaction-proxy";
 import { testBedContract, migrationContract } from "../common.setup";
+import * as path from "path";
 
-const buildDirectory = "./build/api.folder/";
+const buildDirectory = "./build/api.folder";
 let folderABISource: FolderABISource;
 
 before(`Copying built contract ABIs to ${buildDirectory}...`, () => {
@@ -34,12 +34,8 @@ describe("FolderABISource", () => {
         Error, `Error: FolderABISource's directory does not exist (${fileName})`
       );
 
-      rimraf(fileName, (err) => {
-        if (err) {
-          assert.fail(err.message);
-        }
-        done();
-      });
+      fs.unlinkSync(fileName);
+      done();
     });
 
     it("succeeds when directory is valid", () => {
@@ -146,59 +142,22 @@ describe("FolderABISource", () => {
       folder.insertABI(`${buildDirectory}/test`, "Test.json", { contractName: "Test" });
       return folderABISource.getABIMetadatas()
         .then((metadatas: any) => {
-          assert.equal(metadatas.length, 3);
 
-          const abi0 = metadatas[0];
-          const abi1 = metadatas[1];
-          const abi2 = metadatas[2];
+          let foundSubdirectoryContract = false;
+          const searchFile = path.resolve(`${buildDirectory}/test/Test.json`);
+          metadatas.forEach((element : any) => {
+            if (path.resolve(element.filePath) == searchFile) {
+              foundSubdirectoryContract = true;
+            }
+          });
 
-          assert.equal(abi0.contractName, migrationContract);
-          assert.equal(abi1.contractName, testBedContract);
-          assert.equal(abi2.contractName, "Test");
+          assert(foundSubdirectoryContract, "Could not find metadata.");
         })
         .catch((err: Error) => {
           assert.fail(err.message);
         })
         .then(() => {
           folder.removeABI(`${buildDirectory}/test`, "Test.json");
-        });
-    });
-
-    it("should be able to recurse complex subfolders", () => {
-      folder.insertABI(`${buildDirectory}/test`, "Test.json", { contractName: "Test" });
-      folder.insertABI(`${buildDirectory}/test/lower`, "TestLower.json", { contractName: "TestLower" });
-      folder.insertABI(`${buildDirectory}/another`, "Another.json", { contractName: "Another" });
-      folder.insertABI(`${buildDirectory}/test/another`, "TestAnother.json", { contractName: "TestAnother" });
-      folder.insertABI(`${buildDirectory}/test/lower/another`, "TestLowerAnother.json", { contractName: "TestLowerAnother" });
-      return folderABISource.getABIMetadatas()
-        .then((metadatas: any) => {
-          assert.equal(metadatas.length, 7);
-
-          const abi0 = metadatas[0];
-          const abi1 = metadatas[1];
-          const abi2 = metadatas[2];
-          const abi3 = metadatas[3];
-          const abi4 = metadatas[4];
-          const abi5 = metadatas[5];
-          const abi6 = metadatas[6];
-
-          assert.equal(abi0.contractName, migrationContract);
-          assert.equal(abi1.contractName, testBedContract);
-          assert.equal(abi2.contractName, "Another");
-          assert.equal(abi3.contractName, "Test");
-          assert.equal(abi4.contractName, "TestAnother");
-          assert.equal(abi5.contractName, "TestLower");
-          assert.equal(abi6.contractName, "TestLowerAnother");
-        })
-        .catch((err: Error) => {
-          assert.fail(err.message);
-        })
-        .then(() => {
-          folder.removeABI(`${buildDirectory}/test`, "Test.json");
-          folder.removeABI(`${buildDirectory}/test/lower`, "TestLower.json");
-          folder.removeABI(`${buildDirectory}/another`, "Another.json");
-          folder.removeABI(`${buildDirectory}/test/another`, "TestAnother.json");
-          folder.removeABI(`${buildDirectory}/test/lower/another`, "TestLowerAnother.json");
         });
     });
 
@@ -206,161 +165,13 @@ describe("FolderABISource", () => {
       folder.insertABI(buildDirectory, "Test.json", undefined);
       return folderABISource.getABIMetadatas()
         .then((metadatas: any) => {
-          assert.equal(metadatas.length, 2);
 
-          const abi0 = metadatas[0];
-          const abi1 = metadatas[1];
-
-          assert.equal(abi0.contractName, migrationContract);
-          assert.equal(abi1.contractName, testBedContract);
-        })
-        .catch((err: Error) => {
-          assert.fail(err.message);
-        })
-        .then(() => {
-          folder.removeABI(buildDirectory, "Test.json");
-        });
-    });
-
-  });
-  describe(".getABIs()", () => {
-
-    it("should succeed in the normal case (flat directory, N valid files)", () => {
-      return folderABISource.getABIs()
-        .then((abis: any) => {
-          assert.equal(abis.length, 2);
-
-          const abi0 = abis[0];
-          const abi1 = abis[1];
-
-          assert.equal(abi0.contractName, migrationContract);
-          assert.notEqual(abi0.abi, undefined);
-          assert.equal(abi1.contractName, testBedContract);
-          assert.notEqual(abi1.abi, undefined);
-        })
-        .catch((err: Error) => {
-          assert.fail(err.message);
-        });
-    });
-
-    it("should work if ABI json is on seperate lines", () => {
-      folder.insertABI(buildDirectory, "Test.json", { contractName: "Test", abi: [ ] });
-      return folderABISource.getABIs()
-        .then((abis: any) => {
-          assert.equal(abis.length, 3);
-
-          const abi0 = abis[0];
-          const abi1 = abis[1];
-          const abi2 = abis[2];
-
-          assert.equal(abi0.contractName, migrationContract);
-          assert.notEqual(abi0.abi, undefined);
-          assert.equal(abi1.contractName, "Test");
-          assert.notEqual(abi1.abi, undefined);
-          assert.equal(abi2.contractName, testBedContract);
-          assert.notEqual(abi2.abi, undefined);
-        })
-        .catch((err: Error) => {
-          assert.fail(err.message);
-        })
-        .then(() => {
-          folder.removeABI(buildDirectory, "Test.json");
-        });
-    });
-
-    it("should work if ABI json is all on one line", () => {
-      folder.insertABI(buildDirectory, "Test.json", { contractName: "Test", abi: [ ] }, false);
-      return folderABISource.getABIs()
-        .then((abis: any) => {
-          assert.equal(abis.length, 3);
-
-          const abi0 = abis[0];
-          const abi1 = abis[1];
-          const abi2 = abis[2];
-
-          assert.equal(abi0.contractName, migrationContract);
-          assert.notEqual(abi0.abi, undefined);
-          assert.equal(abi1.contractName, "Test");
-          assert.notEqual(abi1.abi, undefined);
-          assert.equal(abi2.contractName, testBedContract);
-          assert.notEqual(abi2.abi, undefined);
-        })
-        .catch((err: Error) => {
-          assert.fail(err.message);
-        })
-        .then(() => {
-          folder.removeABI(buildDirectory, "Test.json");
-        });
-    });
-
-    it("should omit files that don't have contractName", () => {
-      folder.insertABI(buildDirectory, "Test.json", {});
-      return folderABISource.getABIs()
-        .then((metadatas: any) => {
-          assert.equal(metadatas.length, 2);
-
-          const abi0 = metadatas[0];
-          const abi1 = metadatas[1];
-
-          assert.equal(abi0.contractName, migrationContract);
-          assert.equal(abi1.contractName, testBedContract);
-        })
-        .catch((err: Error) => {
-          assert.fail(err.message);
-        })
-        .then(() => {
-          folder.removeABI(buildDirectory, "Test.json");
-        });
-    });
-
-    it("should fail when file name != contractName", () => {
-      folder.insertABI(buildDirectory, "Test.json", { contractName: "NotTest" });
-      return folderABISource.getABIs()
-        .then((metadatas: any) => {
-          assert.fail("One of the contractNames is incorrect, this should not succeed.");
-        })
-        .catch((err: Error) => {
-          folder.removeABI(buildDirectory, "Test.json");
-        });
-    });
-
-    it("should fail when json is invalid", () => {
-      mkdirp.sync(buildDirectory);
-      fs.writeFileSync(`${buildDirectory}/Test.json`, '{contractName: "Test", abi: {}');
-      return folderABISource.getABIs()
-        .then((metadatas: any) => {
-          assert.fail("One of the contractNames is incorrect, this should not succeed.");
-        })
-        .catch((err: Error) => {
-          folder.removeABI(buildDirectory, "Test.json");
-        });
-    });
-
-    it("should fail when multiple files have the same contractName", () => {
-      folder.insertABI(buildDirectory, "Test.json", { contractName: "Test", abi: [ ] });
-      folder.insertABI(`${buildDirectory}/test`, "Test.json", { contractName: "Test", abi: [ ] });
-      return folderABISource.getABIs()
-        .then((abis: any) => {
-          assert.fail("One of the contractNames is incorrect, this should not succeed.");
-        })
-        .catch((err: Error) => {
-          folder.removeABI(buildDirectory, "Test.json");
-          folder.removeABI(`${buildDirectory}/test`, "Test.json");
-        });
-    });
-
-    it("should omit files that are empty", () => {
-      mkdirp.sync(buildDirectory);
-      fs.writeFileSync(`${buildDirectory}/Test.json`, "");
-      return folderABISource.getABIs()
-        .then((metadatas: any) => {
-          assert.equal(metadatas.length, 2);
-
-          const abi0 = metadatas[0];
-          const abi1 = metadatas[1];
-
-          assert.equal(abi0.contractName, migrationContract);
-          assert.equal(abi1.contractName, testBedContract);
+          const searchFile = path.resolve(`${buildDirectory}/Test.json`);
+          metadatas.forEach((element : any) => {
+            if (path.resolve(element.filePath) == searchFile) {
+              assert.fail("Should not have found Test.json");
+            }
+          });
         })
         .catch((err: Error) => {
           assert.fail(err.message);

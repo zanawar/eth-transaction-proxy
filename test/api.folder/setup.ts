@@ -1,12 +1,26 @@
 import * as common from "../common.setup";
 import { ncp } from "ncp";
-import * as rimraf from "rimraf";
 import * as mkdirp from "mkdirp";
 import * as fs from "fs";
 
+const deleteFolderRecursive = function(path : string) {
+  if (fs.existsSync(path)) {
+    fs.readdirSync(path).forEach(function(file : string, index : any){
+      var curPath = path + "/" + file;
+      if (fs.lstatSync(curPath).isDirectory()) { // recurse
+        deleteFolderRecursive(curPath);
+      } else { // delete file
+        fs.unlinkSync(curPath);
+      }
+    });
+    fs.rmdirSync(path);
+  }
+};
+
 const cleanBuildFolder = (deployFolder: string): Promise<void> => {
   return new Promise((resolve) => {
-    rimraf(`${deployFolder}/*`, () => resolve());
+    deleteFolderRecursive(`${deployFolder}`);
+    resolve();
   });
 };
 
@@ -48,9 +62,20 @@ export const insertABI = (directory: string, fileName: string, abi: any, isPrett
   }
 
   mkdirp.sync(directory);
-  fs.writeFileSync(`${directory}/${fileName}`, jsonStr);
+
+  const filePath = `${directory}/${fileName}`;
+
+  fs.writeFileSync(filePath, jsonStr);
 };
 
 export const removeABI = (directory: string, fileName: string) => {
-  rimraf.sync(`${directory}/${fileName}`);
+  const filePath = `${directory}/${fileName}`;
+
+  const isFile = fs.lstatSync(filePath).isFile();
+
+  if (isFile) {
+    //fs.unlinkSync(filePath);
+
+    
+  }
 };

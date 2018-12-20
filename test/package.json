@@ -2,6 +2,10 @@
   "name": "transaction-notary-test",
   "version": "0.1.0",
   "scripts": {
+    "tsc": "tsc --skipLibCheck",
+    "build": "npm run tsc && node ./tools/post-build.js",
+    "compile": "npm run build && cd ../bin/test && npm install && npm install ../eth-transaction-proxy",
+    "test": "cd ../bin/test && mocha ./api.folder/spec.js --exit --timeout 10000",
     "test-all": "npm run test-api-folder && npm run test-api-contractRepo && npm run test-api-transactionNotary && npm run test-function",
     "test-all-ci": "npm run test-api-folder-ci && npm run test-api-contractRepo-ci && npm run test-api-transactionNotary-ci",
     "test-api-transactionNotary": "mocha -r ts-node/register ./api.transactionNotary/spec.ts --exit --timeout 10000",
