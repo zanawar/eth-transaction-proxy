@@ -1,8 +1,6 @@
 import "mocha";
 import * as assert from "assert";
 import * as contractRepo from "./setup";
-import { ABICache } from "eth-transaction-proxy/lib/internal/ABICache";
-import { FileContract } from "eth-transaction-proxy/lib/contract-sources/filesystem/FileContract";
 import { testBedContract, migrationContract } from "../common.setup";
 
 const buildDirectory0 = "./build/api.folder0/";
@@ -22,115 +20,6 @@ after(() => {
     buildDirectory1,
     buildDirectory2
   );
-});
-
-describe("ABICache", () => {
-  describe("addMetadata(metadata)", () => {
-
-    const cache = new ABICache();
-
-    it("succeeds in the normal case", () => {
-      const metadata = new FileContract("Foo", "test");
-      cache.addMetadata(metadata);
-      assert.equal(cache.getMap().has("Foo"), true);
-    });
-
-    it("errors when duplicates are added", () => {
-      const metadata0 = new FileContract("Dup", "test");
-      const metadata1 = new FileContract("Dup", "test");
-      cache.addMetadata(metadata0);
-
-      try {
-        cache.addMetadata(metadata1);
-      } catch (err) {
-        return;
-      }
-
-      assert.fail("This should fail.");
-    });
-
-  });
-  describe("addABI(abi)", () => {
-
-    const cache = new ABICache();
-
-    it("succeeds in the normal case", () => {
-      const abi = { contractName: "Foo" };
-      cache.addABI(abi);
-      assert.equal(cache.getMap().has("Foo"), true);
-    });
-
-    it("errors when duplicates are added", () => {
-      const abi0 = { contractName: "Dup" };
-      const abi1 = { contractName: "Dup" };
-      cache.addABI(abi0);
-
-      try {
-        cache.addABI(abi1);
-      } catch (err) {
-        return;
-      }
-
-      assert.fail("This should fail.");
-    });
-
-    it("errors when an undefined abi is passed in", () => {
-      const abi = undefined;
-
-      try {
-        cache.addABI(abi);
-      } catch (err) {
-        return;
-      }
-
-      assert.fail("This should fail.");
-    });
-
-    it("errors when an undefined contractName is passed in", () => {
-      const abi = { contractName: undefined };
-
-      try {
-        cache.addABI(abi);
-      } catch (err) {
-        return;
-      }
-
-      assert.fail("This should fail.");
-    });
-
-  });
-  describe("tryGetABI(contractName)", () => {
-
-    const cache = new ABICache();
-    const abi = { contractName: "Foo" };
-    cache.addABI(abi);
-
-    it("succeeds in the normal case", () => {
-      return cache.tryGetABI("Foo")
-        .then((result) => assert.equal(result, abi))
-        .catch((err: Error) => assert.fail(err.message));
-    });
-
-    it("returns nothing when it isn't found", () => {
-      return cache.tryGetABI("NotFoo")
-        .then((result) => assert.equal(result, undefined))
-        .catch((err: Error) => assert.fail(err.message));
-    });
-
-  });
-  describe("clear", () => {
-
-    it("clears the cache", () => {
-      const cache = new ABICache();
-      const abi = { contractName: "Foo" };
-      cache.addABI(abi);
-
-      assert.equal(cache.getMap().size, 1);
-      cache.clear();
-      assert.equal(cache.getMap().size, 0);
-    });
-
-  });
 });
 
 describe("ContractRepo", () => {
@@ -205,10 +94,10 @@ describe("ContractRepo", () => {
     });
 
   });
-  describe(".cacheMetadata", () => {
+  describe(".precache()", () => {
 
     it("should fail when 0 sources are present", () => {
-      return contractRepoS0.cacheMetadata()
+      return contractRepoS0.precache()
         .then(() => {
           assert.fail("Error: This shouldn't succeed.");
         })
@@ -216,7 +105,7 @@ describe("ContractRepo", () => {
     });
 
     it("succeeds with 1 source present & cache is correct", () => {
-      return contractRepoS1.cacheMetadata()
+      return contractRepoS1.precache()
         .then(() => {
           const cache = contractRepoS1.getCacheInternal();
           const cacheMap = cache.getMap();
@@ -226,10 +115,10 @@ describe("ContractRepo", () => {
           assert.notEqual(migrations, undefined);
           assert.notEqual(testBed, undefined);
           if (migrations) {
-            assert.equal(migrations.getContractName(), migrationContract);
+            assert.equal(migrations.name(), migrationContract);
           }
           if (testBed) {
-            assert.equal(testBed.getContractName(), testBedContract);
+            assert.equal(testBed.name(), testBedContract);
           }
         })
         .catch((err: Error) => {
@@ -237,8 +126,8 @@ describe("ContractRepo", () => {
         });
     });
 
-    it("succeeds with 3 sources present & cache is correct", () => {
-      return contractRepoS3.cacheMetadata()
+    it("succeeds with multiple sources present & cache is correct", () => {
+      return contractRepoS3.precache()
         .then(() => {
           const cache = contractRepoS3.getCacheInternal();
           const cacheMap = cache.getMap();
@@ -252,16 +141,16 @@ describe("ContractRepo", () => {
           assert.notEqual(test, undefined);
           assert.notEqual(testAgain, undefined);
           if (migrations) {
-            assert.equal(migrations.getContractName(), migrationContract);
+            assert.equal(migrations.name(), migrationContract);
           }
           if (testBed) {
-            assert.equal(testBed.getContractName(), testBedContract);
+            assert.equal(testBed.name(), testBedContract);
           }
           if(test) {
-            assert.equal(test.getContractName(), "Test");
+            assert.equal(test.name(), "Test");
           }
           if (testAgain) {
-            assert.equal(testAgain.getContractName(), "TestAgain");
+            assert.equal(testAgain.name(), "TestAgain");
           }
         })
         .catch((err: Error) => {

@@ -1,13 +1,13 @@
 import * as folder from "../api.folder/setup";
 import { ContractRepo, FolderContractSource } from "eth-transaction-proxy";
-import { ABICache } from "eth-transaction-proxy/lib/internal/ABICache"; 
+import { ContractCache } from "eth-transaction-proxy/lib/internal/ContractCache"; 
 
 export let FolderContractSource0: FolderContractSource;
 export let FolderContractSource1: FolderContractSource;
 export let FolderContractSource2: FolderContractSource;
 
 export class TestContractRepo extends ContractRepo {
-  public getCacheInternal(): ABICache {
+  public getCacheInternal(): ContractCache {
     return this.cache;
   }
 }
