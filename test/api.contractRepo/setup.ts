@@ -1,10 +1,10 @@
 import * as folder from "../api.folder/setup";
-import { ContractRepo, FolderABISource } from "eth-transaction-proxy";
+import { ContractRepo, FolderContractSource } from "eth-transaction-proxy";
 import { ABICache } from "eth-transaction-proxy/lib/internal/ABICache"; 
 
-export let folderABISource0: FolderABISource;
-export let folderABISource1: FolderABISource;
-export let folderABISource2: FolderABISource;
+export let FolderContractSource0: FolderContractSource;
+export let FolderContractSource1: FolderContractSource;
+export let FolderContractSource2: FolderContractSource;
 
 export class TestContractRepo extends ContractRepo {
   public getCacheInternal(): ABICache {
@@ -22,9 +22,9 @@ export const setup = (
       .then(() => {
         folder.insertABI(buildDirectory1, "Test.json", { contractName: "Test" });
         folder.insertABI(buildDirectory2, "TestAgain.json", { contractName: "TestAgain" });
-        folderABISource0 = new FolderABISource(buildDirectory0);
-        folderABISource1 = new FolderABISource(buildDirectory1);
-        folderABISource2 = new FolderABISource(buildDirectory2);
+        FolderContractSource0 = new FolderContractSource(buildDirectory0);
+        FolderContractSource1 = new FolderContractSource(buildDirectory1);
+        FolderContractSource2 = new FolderContractSource(buildDirectory2);
       })
       .then(resolve)
       .catch(reject);

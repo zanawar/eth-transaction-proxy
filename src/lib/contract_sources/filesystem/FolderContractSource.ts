@@ -1,16 +1,16 @@
 import * as fs from "fs";
 import { IContract } from "../../interfaces/IContract";
 import { IABISource } from "../../interfaces/IABISource";
-import { FileABIMetadata } from "./FileABIMetadata";
-import { findUniqueFileByName, getFilePaths, tryGetABIMetadata } from "./FileUtils";
+import { FileContract } from "./FileContract";
+import { findUniqueFileByName, getFilePaths, tryGetContractMetadata } from "./FileUtils";
 
 // Note: Requires that the fileName == contractName
-export class FolderABISource implements IABISource {
+export class FolderContractSource implements IABISource {
   private directory: string;
 
   constructor(directory: string) {
     if (!fs.existsSync(directory) || !fs.statSync(directory).isDirectory()) {
-      throw new Error(`Error: FolderABISource's directory does not exist (${directory})`);
+      throw new Error(`Error: FolderContractSource's directory does not exist (${directory})`);
     }
 
     this.directory = directory;
@@ -24,7 +24,7 @@ export class FolderABISource implements IABISource {
           const metadataPromises: Promise<IContract | undefined>[] = [];
 
           for (const filePath of filePaths) {
-            metadataPromises.push(tryGetABIMetadata(filePath));
+            metadataPromises.push(tryGetContractMetadata(filePath));
           }
 
           return Promise.all(metadataPromises);
@@ -42,12 +42,12 @@ export class FolderABISource implements IABISource {
       return findUniqueFileByName(this.directory, `${contractName}.json`)
             .then((fileName) => {
               if (fileName) {
-                return tryGetABIMetadata(fileName);
+                return tryGetContractMetadata(fileName);
               } else {
                 return undefined;
               }
             })
-            .then((metadata?: FileABIMetadata) => {
+            .then((metadata?: FileContract) => {
               resolve(metadata);
             })
             .catch(reject);

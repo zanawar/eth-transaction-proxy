@@ -3,7 +3,7 @@ import { IContract } from "../../interfaces/IContract";
 import { BlobContract } from "./BlobContract";
 import { parseABI, readContract } from "./BlobUtils";
 
-export class BlobABIMetadata implements IContract {
+export class AzureBlobContract implements IContract {
   public readonly containerName: string;
   public readonly contractName: string;
   public readonly blobService: storage.BlobService;
@@ -14,13 +14,13 @@ export class BlobABIMetadata implements IContract {
     this.blobService = blobService;
   }
 
-  public getABI(): Promise<any> {
+  public abi(): Promise<any> {
     return new Promise((resolve, reject) => {
 
       // read a specific contract (blob) in the specified container name, pass in the "false" flag to read the full
       // contract for gathering the ABI
       readContract(this.blobService, this.containerName, this.contractName, false).then(
-        function(this: BlobABIMetadata, blobContract: BlobContract) {
+        function(this: AzureBlobContract, blobContract: BlobContract) {
           if (blobContract) {
             const json = parseABI(blobContract);
             resolve(json);

@@ -2,19 +2,19 @@ import * as assert from "assert";
 import { IContract } from "../interfaces/IContract";
 
 export class ABIData {
-  private abi?: any;
+  private cachedAbi?: any;
   private metadata?: IContract;
 
   constructor(abi?: any, metadata?: IContract) {
-    this.abi = abi;
+    this.cachedAbi = abi;
     this.metadata = metadata;
 
     assert.equal(!abi && !metadata, false, "Error: You must construct ABI data with an abi or metadata.");
   }
 
   public getContractName(): string {
-    if (this.abi) {
-      return this.abi.contractName;
+    if (this.cachedAbi) {
+      return this.cachedAbi.contractName;
     } else if (this.metadata) {
       return this.metadata.contractName;
     } else {
@@ -24,12 +24,12 @@ export class ABIData {
     return "";
   }
 
-  public async getABI(): Promise<any | undefined> {
-    if (this.abi) {
-      return this.abi;
+  public async abi(): Promise<any | undefined> {
+    if (this.cachedAbi) {
+      return this.cachedAbi;
     } else if (this.metadata) {
-      this.abi = await this.metadata.getABI();
-      return this.abi;
+      this.cachedAbi = await this.metadata.abi();
+      return this.cachedAbi;
     } else {
       assert.fail("Error: This should never happen.");
     }

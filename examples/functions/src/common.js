@@ -17,7 +17,7 @@ module.exports.getProperty = (req, propertyName, required=true) => {
   return property;
 }
 
-module.exports.createBlobABISource = (api, context) => {
+module.exports.createAzureBlobContractSource = (api, context) => {
   try {
     if (!blobConnectStr) {
       throw new Error("BLOB_CONNECT_STR not set.");
@@ -27,7 +27,7 @@ module.exports.createBlobABISource = (api, context) => {
       throw new Error("BLOB_CONTAINER_NAME not set.");
     }
 
-    return new api.BlobABISource(blobConnectStr, blobContainerName);
+    return new api.AzureBlobContractSource(blobConnectStr, blobContainerName);
   } catch (e) {
     context.log(e.message);
     context.res = {

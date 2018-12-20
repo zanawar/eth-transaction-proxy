@@ -16,7 +16,7 @@ var ContractRepo = api.ContractRepo;
 const common = require("../common");
 const getProperty = common.getProperty;
 const createNotary = common.createNotary;
-const createBlobABISource = common.createBlobABISource;
+const createAzureBlobContractSource = common.createAzureBlobContractSource;
 
 module.exports = async (context, req) => {
   context.log('JavaScript HTTP trigger function processed a request.');
@@ -44,14 +44,14 @@ module.exports = async (context, req) => {
   }
 
   // try to create the folder abi source
-  let blobABISource = createBlobABISource(api, context);
+  let AzureBlobContractSource = createAzureBlobContractSource(api, context);
 
-  if (blobABISource === undefined) {
+  if (AzureBlobContractSource === undefined) {
     return;
   }
 
   const contractRepo = new ContractRepo([
-    blobABISource
+    AzureBlobContractSource
   ]);
 
   // create the notary

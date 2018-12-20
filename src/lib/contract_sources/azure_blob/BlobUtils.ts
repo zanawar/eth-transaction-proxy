@@ -1,11 +1,11 @@
 import * as storage from "azure-storage";
-import { BlobABIMetadata } from "./BlobABIMetadata";
+import { AzureBlobContract } from "./AzureBlobContract";
 import { BlobContract } from "./BlobContract";
 
 // we are expecting just the partial data of the contract here to make sure it contains the correct
 // metadata we're looking for
 export const tryGetABIMetadata =
-    (blobService: storage.BlobService, blobContract: BlobContract): BlobABIMetadata | undefined => {
+    (blobService: storage.BlobService, blobContract: BlobContract): AzureBlobContract | undefined => {
 
         const match = blobContract.blobData.match("\"contractName\"\\s?:\\s?\"(.*)\"");
 
@@ -14,7 +14,7 @@ export const tryGetABIMetadata =
             const contractName = match[1];
 
             if (contractName.toLowerCase() === blobContract.getContractName().toLowerCase()) {
-                return new BlobABIMetadata(blobService, blobContract.containerName, blobContract.blobName);
+                return new AzureBlobContract(blobService, blobContract.containerName, blobContract.blobName);
             } else {
                 throw new Error(`Error: Contract name does not match what is in contract file.`);
             }

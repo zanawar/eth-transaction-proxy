@@ -31,7 +31,7 @@ export class ABICache {
     const cached = this.cache.get(contractName);
 
     if (cached !== undefined) {
-      return cached.getABI();
+      return cached.abi();
     }
 
     return new Promise((resolve) => resolve(undefined));

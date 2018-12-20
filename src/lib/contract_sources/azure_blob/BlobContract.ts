@@ -3,6 +3,7 @@ export class BlobContract {
     public readonly blobName: string;
     public readonly blobData: string;
 
+    // @TODO: Refactor
     constructor(containerName: string, blobName: string, blobData: string) {
         this.containerName = containerName;
         this.blobName = blobName;

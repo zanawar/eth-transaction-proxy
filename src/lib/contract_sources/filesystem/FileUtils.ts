@@ -1,7 +1,7 @@
 import * as find from "find";
 import * as fs from "fs";
 import * as readLine from "readline";
-import { FileABIMetadata } from "./FileABIMetadata";
+import { FileContract } from "./FileContract";
 
 export const getFilePaths = (directory: string): Promise<string[]> => {
   return new Promise((resolve, reject) => {
@@ -29,7 +29,7 @@ export const findUniqueFileByName = (rootDirectory: string, fileName: string): P
   });
 };
 
-export const tryGetABIMetadata = (filePath: string): Promise<FileABIMetadata | undefined> => {
+export const tryGetContractMetadata = (filePath: string): Promise<FileContract | undefined> => {
 
   return new Promise((resolve, reject) => {
 
@@ -40,7 +40,7 @@ export const tryGetABIMetadata = (filePath: string): Promise<FileABIMetadata | u
     });
 
     const fileName = filePath.replace(/^.*[\\\/]/, "");
-    let metadata: FileABIMetadata | undefined;
+    let metadata: FileContract | undefined;
     let failed = false;
 
     const stopReading = () => {
@@ -80,7 +80,7 @@ export const tryGetABIMetadata = (filePath: string): Promise<FileABIMetadata | u
 
         // the contract name matches the file name,
         // let's create the metadata and be done
-        metadata = new FileABIMetadata(contractName, filePath);
+        metadata = new FileContract(contractName, filePath);
         lineReader.close();
         resolve(metadata);
       }

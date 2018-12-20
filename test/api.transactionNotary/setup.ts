@@ -74,7 +74,7 @@ export const setup = (config: Config): Promise<void> => {
       })
       .then(() => {
         config.contractRepo = new ContractRepo([
-          contractRepo.folderABISource0
+          contractRepo.FolderContractSource0
         ]);
       })
       .then(() => {

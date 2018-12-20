@@ -1,7 +1,7 @@
 import { IContract } from "../../interfaces/IContract";
 import { parseABI } from "./FileUtils";
 
-export class FileABIMetadata implements IContract {
+export class FileContract implements IContract {
   public contractName: string;
   public filePath: string;
 
@@ -10,7 +10,7 @@ export class FileABIMetadata implements IContract {
     this.contractName = contractName;
   }
 
-  public getABI(): Promise<any> {
+  public abi(): Promise<any> {
     return new Promise((resolve, reject) => {
       try {
         const json = parseABI(this.filePath);

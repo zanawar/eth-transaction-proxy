@@ -1,11 +1,11 @@
 import "mocha";
 import * as assert from "assert";
-import { BlobABISource } from "eth-transaction-proxy";
+import { AzureBlobContractSource } from "eth-transaction-proxy";
 
 const containerName = "testcontracts";
 const contractName = "Migrations";
 let connectionString = "";
-let blobABISource: BlobABISource;
+let AzureBlobContractSource: AzureBlobContractSource;
 
 before("Setup blob storage connector", () => {
     let env = process.env["TESTING_BLOB_STORAGE"];
@@ -15,15 +15,15 @@ before("Setup blob storage connector", () => {
         throw Error("You must setup the environment variable 'TESTING_BLOB_STORAGE' to connect to blob storage for this test suite.");
     }
 
-    blobABISource = new BlobABISource(connectionString, containerName);
+    AzureBlobContractSource = new AzureBlobContractSource(connectionString, containerName);
 });
 
-describe("BlobABISource", () => {
+describe("AzureBlobContractSource", () => {
     describe("constructor", () => {
 
         it("should connect to blob storage", () => {
             assert.doesNotThrow(() => {
-                new BlobABISource(connectionString, containerName);
+                new AzureBlobContractSource(connectionString, containerName);
             });
         });
 
@@ -31,16 +31,16 @@ describe("BlobABISource", () => {
             const connectionString = 'abcd';
 
             assert.throws(() => {
-                new BlobABISource(connectionString, containerName);
+                new AzureBlobContractSource(connectionString, containerName);
             });
         });
 
         it("container does not exist", () => {
 
             const containerName = 'doesnotexist';
-            blobABISource = new BlobABISource(connectionString, containerName);
+            AzureBlobContractSource = new AzureBlobContractSource(connectionString, containerName);
 
-            return blobABISource.validateConnection()
+            return AzureBlobContractSource.validateConnection()
             .then((result) => {
                 assert.equal(result, false);
             })
@@ -48,9 +48,9 @@ describe("BlobABISource", () => {
         });
 
         it("container does exist", () => {
-            blobABISource = new BlobABISource(connectionString, containerName);
+            AzureBlobContractSource = new AzureBlobContractSource(connectionString, containerName);
 
-            return blobABISource.validateConnection()
+            return AzureBlobContractSource.validateConnection()
             .then((result) => {
                 assert.equal(result, true);
             })
@@ -60,7 +60,7 @@ describe("BlobABISource", () => {
 
     describe("list", () => {
         it("should list 2 abi metadatas", () => {
-            return blobABISource.list().then((metadatas) => {
+            return AzureBlobContractSource.list().then((metadatas) => {
                 assert.equal(metadatas.length, 2);
             });
         });
@@ -68,7 +68,7 @@ describe("BlobABISource", () => {
 
     describe("get", () => {
         it("should get a specific ABI", () => {
-            return blobABISource.get(contractName).then((abi) => {
+            return AzureBlobContractSource.get(contractName).then((abi) => {
                 assert(Object.keys(abi).length > 0);
             });
         });
@@ -77,7 +77,7 @@ describe("BlobABISource", () => {
             const contractName = "doesnotexist";
 
             let didFail = false;
-            return blobABISource.get(contractName).then((abi) => {
+            return AzureBlobContractSource.get(contractName).then((abi) => {
 
             }).catch((err: Error) => {
                 didFail = true;

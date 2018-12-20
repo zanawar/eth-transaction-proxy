@@ -2,7 +2,7 @@ import "mocha";
 import * as assert from "assert";
 import * as contractRepo from "./setup";
 import { ABICache } from "eth-transaction-proxy/lib/internal/ABICache";
-import { FileABIMetadata } from "eth-transaction-proxy/lib/abi-sources/folder/FileABIMetadata";
+import { FileContract } from "eth-transaction-proxy/lib/abi-sources/folder/FileContract";
 import { testBedContract, migrationContract } from "../common.setup";
 
 const buildDirectory0 = "./build/api.folder0/";
@@ -30,14 +30,14 @@ describe("ABICache", () => {
     const cache = new ABICache();
 
     it("succeeds in the normal case", () => {
-      const metadata = new FileABIMetadata("Foo", "test");
+      const metadata = new FileContract("Foo", "test");
       cache.addMetadata(metadata);
       assert.equal(cache.getMap().has("Foo"), true);
     });
 
     it("errors when duplicates are added", () => {
-      const metadata0 = new FileABIMetadata("Dup", "test");
-      const metadata1 = new FileABIMetadata("Dup", "test");
+      const metadata0 = new FileContract("Dup", "test");
+      const metadata1 = new FileContract("Dup", "test");
       cache.addMetadata(metadata0);
 
       try {
@@ -147,16 +147,16 @@ describe("ContractRepo", () => {
 
     it("succeeds with 1 source location", () => {
       contractRepoS1 = new contractRepo.TestContractRepo([
-        contractRepo.folderABISource0
+        contractRepo.FolderContractSource0
       ]);
       assert.equal(contractRepoS1.getSources().length, 1);
     });
 
     it("succeeds with 3 source locations", () => {
       contractRepoS3 = new contractRepo.TestContractRepo([
-        contractRepo.folderABISource0,
-        contractRepo.folderABISource1,
-        contractRepo.folderABISource2
+        contractRepo.FolderContractSource0,
+        contractRepo.FolderContractSource1,
+        contractRepo.FolderContractSource2
       ]);
       assert.equal(contractRepoS3.getSources().length, 3);
     })
