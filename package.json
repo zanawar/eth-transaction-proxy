@@ -4,11 +4,14 @@
   "scripts": {
     "postinstall": "cd ./src && npm install",
     "build": "cd ./src && npm run build",
-    "test": "cross-env TEST=test-all npm run test-docker-run",
+    "build-test": "cd ./test && npm run build",
+    "build-all": "npm run build && npm run build-test",
+    "test": "cd ./bin/test && npm run test-all",
     "test-ci": "cross-env TEST=test-all-ci npm run test-docker-run",
     "test-docker-run": "cd ./docker/compose/Test && docker-compose up --build --abort-on-container-exit"
   },
   "devDependencies": {
-    "cross-env": "^5.2.0"
+    "cross-env": "^5.2.0",
+    "ncp": "^2.0.0"
   }
 }

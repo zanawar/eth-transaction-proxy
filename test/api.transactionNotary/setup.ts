@@ -3,8 +3,7 @@ import Web3 = require("web3");
 import * as ganache from "ganache-core";
 import * as common from "../common.setup";
 import { testBedContract } from "../common.setup";
-import * as contractRepo from "../api.contractRepo/setup";
-import { TransactionNotary, ContractRepo } from "eth-transaction-proxy";
+import { TransactionNotary, ContractRepo, FolderContractSource } from "eth-transaction-proxy";
 
 export class TestTransaction {
   package: any;
@@ -58,26 +57,13 @@ const web3Logger = {
 
 const web3NetId: number = 665;
 
-const buildDirectory0 = "./build/api.folder0/";
-const buildDirectory1 = "./build/api.folder1/";
-const buildDirectory2 = "./build/api.folder2/";
-
 export const setup = (config: Config): Promise<void> => {
   return new Promise((resolve, reject) => {
     return common.setup()
       .then(() => {
-        return contractRepo.setup(
-          buildDirectory0,
-          buildDirectory1,
-          buildDirectory2
-        );
-      })
-      .then(() => {
-        config.contractRepo = new ContractRepo([
-          contractRepo.FolderContractSource0
-        ]);
-      })
-      .then(() => {
+        let contractSource = new FolderContractSource(common.abiDirectory);
+        config.contractRepo = new ContractRepo([contractSource]);
+
         config.accountAddr = "0xb8CE9ab6943e0eCED004cDe8e3bBed6568B2Fa01";
         config.accountPriv = "0x348ce564d427a3311b6536bbcff9390d69395b06ed6c486954e971d960fe8709";
 
@@ -100,8 +86,6 @@ export const setup = (config: Config): Promise<void> => {
       })
       .then((accounts) => {
         config.accountAddr = accounts[0].toLowerCase();
-      })
-      .then(() => {
         return config.contractRepo.getContractABI(testBedContract);
       })
       .then((testBedABI) => {
@@ -140,8 +124,4 @@ export const setup = (config: Config): Promise<void> => {
       })
       .catch(reject);
   });
-};
-
-export const teardown = (): Promise<void> => {
-  return contractRepo.teardown(buildDirectory1, buildDirectory2);
 };

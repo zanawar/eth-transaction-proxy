@@ -13,10 +13,6 @@ before("Build contracts, standup network, setup contractRepo...", () => {
   return setup.setup(config);
 });
 
-after(() => {
-  setup.teardown();
-});
-
 describe("TransactionNotary", () => {
 
   describe("constructor", () => {
