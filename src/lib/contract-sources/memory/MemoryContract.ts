@@ -1,8 +1,8 @@
 import { IContract } from "../../interfaces/IContract";
 
 export class MemoryContract implements IContract {
-    public contractName : string;
-    public contractAbi : any;
+    public contractName: string;
+    public contractAbi: any;
 
     constructor(contractName?: string, abi?: any) {
         if (!contractName && !abi) {
@@ -11,18 +11,18 @@ export class MemoryContract implements IContract {
 
         if (contractName) {
             this.contractName = contractName;
-            this.contractAbi = abi;   
+            this.contractAbi = abi;
 
             if (!this.contractAbi) {
-                this.contractAbi = { contractName: contractName }
+                this.contractAbi = { contractName: `${contractName}` };
             }
         } else {
-            this.contractAbi = abi; 
+            this.contractAbi = abi;
             if (this.contractAbi.contractName === undefined) {
                 throw new Error("Contract abi must contain a 'contractName' property.");
             }
             this.contractName = this.contractAbi.contractName;
-        }      
+        }
     }
 
     public abi(): Promise<any> {
