@@ -1,43 +1,28 @@
-import * as folder from "../api.folder/setup";
-import { ContractRepo, FolderContractSource } from "eth-transaction-proxy";
-import { ContractCache } from "eth-transaction-proxy/lib/internal/ContractCache"; 
+import { MemoryContractSource, MemoryContract } from "eth-transaction-proxy";
 
-export let FolderContractSource0: FolderContractSource;
-export let FolderContractSource1: FolderContractSource;
-export let FolderContractSource2: FolderContractSource;
+export let ContractSources: MemoryContractSource[];
+export let ContractNames: string[][];
+export let AllContractNames: string[];
+export let NumSources = 3;
 
-export class TestContractRepo extends ContractRepo {
-  public getCacheInternal(): ContractCache {
-    return this.cache;
+export const createSources = (): void => {
+  const numSources = NumSources;
+
+  ContractSources = new Array<MemoryContractSource>(numSources);
+  ContractNames = new Array<string[]>(numSources);
+  AllContractNames = [];
+
+  for (let i = 0; i < numSources; i++) {
+    ContractNames[i] = [];
+
+    const memoryContracts: MemoryContract[] = [];
+    for (let j = 0; j < i + 1; j++) {
+      const contractName = `Test-${i}-${j}`;
+      ContractNames[i].push(contractName);
+      AllContractNames.push(contractName);
+      memoryContracts.push(new MemoryContract(contractName));
+    }
+
+    ContractSources[i] = new MemoryContractSource(memoryContracts);
   }
-}
-
-export const setup = (
-  buildDirectory0: string,
-  buildDirectory1: string,
-  buildDirectory2: string
-): Promise<void> => {
-  return new Promise((resolve, reject) => {
-    folder.setup(buildDirectory0)
-      .then(() => {
-        folder.insertABI(buildDirectory1, "Test.json", { contractName: "Test" });
-        folder.insertABI(buildDirectory2, "TestAgain.json", { contractName: "TestAgain" });
-        FolderContractSource0 = new FolderContractSource(buildDirectory0);
-        FolderContractSource1 = new FolderContractSource(buildDirectory1);
-        FolderContractSource2 = new FolderContractSource(buildDirectory2);
-      })
-      .then(resolve)
-      .catch(reject);
-  });
-};
-
-export const teardown = (
-  buildDirectory1: string,
-  buildDirectory2: string
-): Promise<void> => {
-  return new Promise((resolve, reject) => {
-    folder.removeABI(buildDirectory1, "Test.json");
-    folder.removeABI(buildDirectory2, "TestAgain.json");
-    resolve();
-  });
 };
