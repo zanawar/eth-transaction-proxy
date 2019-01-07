@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const ncp = require('ncp').ncp
-const execSync = require("child_process").execSync;
+const execSync = require("npm-run").execSync;
 
 let localPackageJson = "./package.json";
 let targetPackageJson = '../bin/test/package.json';
@@ -38,15 +38,17 @@ ncp('./contracts', '../bin/test/contracts', function (err) {
 if (shouldCopy) {
   console.log("Installing needed packages for tests...");
 
-  let SEPARATOR = process.platform === "win32" ? ";" : ":",
-    env = Object.assign({}, process.env);
+  try {
+    // Run the `npm run compile` script which will re-install
+    // npm packages required by the tests
+    const postBuildCommand = "npm run compile";
+    let output = execSync(postBuildCommand, {
+      cwd: process.cwd(),
+      stdio: 'inherit'
+    });
+    console.log("Install success.");
+  } catch (ex) {
+    console.log("An error occurred when installing npm packages for the compiled tests!");
+  }
 
-  env.PATH = path.resolve("./node_modules/.bin") + SEPARATOR + env.PATH;
-
-  const postBuildCommand = "npm run compile";
-  let output = execSync(postBuildCommand, {
-    cwd: process.cwd(),
-    env: env,
-    stdio: 'inherit'
-  });
 }

@@ -4,6 +4,7 @@
   "scripts": {
     "postinstall": "cd ./src && npm install",
     "build": "cd ./src && npm run build",
+    "install-test": "cd ./test && npm install",
     "build-test": "cd ./test && npm run build",
     "build-all": "npm run build && npm run build-test",
     "test": "cd ./bin/test && npm run test-all",
