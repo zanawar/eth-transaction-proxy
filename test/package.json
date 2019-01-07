@@ -7,6 +7,7 @@
     "compile": "cd ../bin/test && npm install && npm install ../eth-transaction-proxy",
     
     "test-all": "npm run test-source-all && npm run test-internal && npm run test-api-all",
+    "test-all-ci": "npm run test-source-all-ci && npm run test-internal-ci && npm run test-api-all-ci",
 
     "test-source-all": "npm run test-source-folder && npm run test-source-blob",
     "test-source-folder": "mocha ./source.folder/spec.js --exit --timeout 10000",
@@ -18,10 +19,17 @@
     "test-api-transactionNotary": "mocha ./api.transactionNotary/spec.js --exit --timeout 10000",
     "test-api-contractRepo": "mocha ./api.contractRepo/spec.js --exit --timeout 10000",
 
-    "test-all-ci": "npm run test-source-folder-ci && npm run test-api-contractRepo-ci && npm run test-api-transactionNotary-ci",
-    "test-api-contractRepo-ci": "mocha ./api.contractRepo/spec.js --exit --timeout 10000 --reporter mocha-junit-reporter --reporter-options mochaFile=./api.contractRepo-results.xml",
-    "test-api-transactionNotary-ci": "mocha ./api.transactionNotary/spec.js --exit --timeout 10000 --reporter mocha-junit-reporter --reporter-options mochaFile=./api.transactionNotary-results.xml",
-    "test-source-folder-ci": "mocha ./source.folder/spec.js --exit --timeout 10000 --reporter mocha-junit-reporter --reporter-options mochaFile=./api.folder-results.xml"
+    "test-source-all-ci": "npm run test-source-folder-ci && npm run test-source-blob-ci",
+    "test-source-folder-ci": "mocha ./source.folder/spec.js --exit --timeout 10000 --reporter mocha-junit-reporter --reporter-options mochaFile=./source.folder-results.xml",
+    "test-source-blob-ci": "mocha ./source.blob/spec.js --exit --timeout 10000 --reporter mocha-junit-reporter --reporter-options mochaFile=./source.blob-results.xml",
+
+    "test-internal-ci" : "mocha ./internal.contractCache --exit --timeout 10000 --reporter mocha-junit-reporter --reporter-options mochaFile=./internal-results.xml",
+
+    "test-api-all-ci": "npm run test-api-contractRepo-ci && npm run test-api-transactionNotary-ci",
+    "test-api-transactionNotary-ci": "mocha ./api.transactionNotary/spec.js --exit --timeout 10000 --reporter-options mochaFile=./api.transactionNotary-results.xml",
+    "test-api-contractRepo-ci": "mocha ./api.contractRepo/spec.js --exit --timeout 10000 --reporter-options mochaFile=./api.contractRepo-results.xml"
+
+
   },
   "dependencies": {
     "@types/find": "^0.2.1",
