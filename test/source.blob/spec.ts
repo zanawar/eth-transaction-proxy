@@ -15,7 +15,7 @@ if (process.env["TEST_BLOB"] == "1") {
         if (env) {
             connectionString = env;
         } else {
-            throw Error("You must setup the environment variable 'TESTING_BLOB_STORAGE' to connect to blob storage for this test suite.");
+            throw Error("You must setup the environment variable 'AZURE_STORAGE_CONNECTION_STRING' to connect to blob storage for this test suite.");
         }
     
         contractSource = new AzureBlobContractSource(connectionString, containerName);

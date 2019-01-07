@@ -20,12 +20,11 @@ The Transaction Notary library tests will build and output into the `bin/tests/`
 From the root directory, run the command:  
 `npm run tests`
 
-## asdf
+# Blob Tests
+To test the Azure Blob contract source, either an Azure Storage Account or Azure Storage Emulator must be available.  
+Set the environment variable `TEST_BLOB = 1` and `AZURE_STORAGE_CONNECTION_STRING` set to an Azure connection string.
 
-All of the tests except `test/api.blob` and `test/function` can be run without docker.  
-
-NOTE: This doesn't work on Windows. The tests create and modify files and folders, which results in node throwing EPERM exceptions. I can't for the life of me figure out how to get around this, I've tried: running user directories, running as admin, turning off AV, changing file/folder flags to allow for read & write.  
-
+# Running Tests From Docker
 ## Inside Docker  
 `npm run test`  
 
