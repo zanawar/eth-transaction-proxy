@@ -75,12 +75,9 @@ describe("ContractRepo", () => {
         .catch((err: Error) => assert.fail(err.message));
     });
 
-    it("should fail with a contract that doesn't exist", () => {
-      return contractRepoAll.getContractABI("BadName")
-        .then((abi) => {
-          assert.equal(abi, undefined);
-        })
-        .catch((err: Error) => assert.fail(err.message));
+    it("should fail with a contract that doesn't exist", async () => {
+      let badContract = await contractRepoAll.getContractABI("BadName");
+      assert.equal(badContract, undefined);
     });
   });
 

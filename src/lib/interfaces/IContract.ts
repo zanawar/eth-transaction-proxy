@@ -1,4 +1,4 @@
 export interface IContract {
   name(): string;
-  abi(): Promise<any>;
+  abi(): Promise<any | undefined>;
 }

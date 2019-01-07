@@ -6,14 +6,17 @@
     "build": "npm run tsc && node ./tools/post-build.js",
     "compile": "cd ../bin/test && npm install && npm install ../eth-transaction-proxy",
     
-    "test-all": "npm run test-source-all && npm run test-api-all",
-    "test-api-all": "npm run test-api-contractRepo && npm run test-api-transactionNotary",
-    "test-api-transactionNotary": "mocha ./api.transactionNotary/spec.js --exit --timeout 10000",
-    "test-api-contractRepo": "mocha ./api.contractRepo/spec.js --exit --timeout 10000",
+    "test-all": "npm run test-source-all && npm run test-internal && npm run test-api-all",
 
     "test-source-all": "npm run test-source-folder && npm run test-source-blob",
     "test-source-folder": "mocha ./source.folder/spec.js --exit --timeout 10000",
     "test-source-blob": "mocha ./source.blob/spec.js --exit --timeout 10000",
+
+    "test-internal" : "mocha ./internal.contractCache --exit --timeout 10000",
+
+    "test-api-all": "npm run test-api-contractRepo && npm run test-api-transactionNotary",
+    "test-api-transactionNotary": "mocha ./api.transactionNotary/spec.js --exit --timeout 10000",
+    "test-api-contractRepo": "mocha ./api.contractRepo/spec.js --exit --timeout 10000",
 
     "test-all-ci": "npm run test-source-folder-ci && npm run test-api-contractRepo-ci && npm run test-api-transactionNotary-ci",
     "test-api-contractRepo-ci": "mocha ./api.contractRepo/spec.js --exit --timeout 10000 --reporter mocha-junit-reporter --reporter-options mochaFile=./api.contractRepo-results.xml",

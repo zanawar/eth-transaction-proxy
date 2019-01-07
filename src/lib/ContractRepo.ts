@@ -20,27 +20,12 @@ export class ContractRepo {
 
   public async getContract(contractName: string): Promise<IContract> {
     this.verifySources();
-
-    // Pull existing version of contract from cache
-    if (this.cache.exists(contractName)) {
-      return await this.cache.get(contractName);
-    }
-
     return await this.getAndCacheContract(contractName);
   }
 
-  public async getContractABI(contractName: string): Promise<any> {
+  public async getContractABI(contractName: string): Promise<any | undefined> {
     this.verifySources();
-
-    let contract: IContract;
-
-    // Pull existing version of contract from cache
-    if (this.cache.exists(contractName)) {
-      contract = await this.cache.get(contractName);
-    } else {
-      contract = await this.getAndCacheContract(contractName);
-    }
-
+    const contract: IContract = await this.getAndCacheContract(contractName);
     return await contract.abi();
   }
 
@@ -52,7 +37,6 @@ export class ContractRepo {
     this.verifySources();
 
     const importPromises: Promise<any>[] = [];
-
     for (const source of this.sources) {
       const contracts = await source.list();
 
@@ -66,21 +50,27 @@ export class ContractRepo {
     }
 
     if (importABI) {
+      // Block until all contracts have been fetched
       await Promise.all(importPromises);
     }
   }
 
   protected async getAndCacheContract(contractName: string): Promise<IContract> {
-    const contracts = await this.querySourcesForContract(contractName);
+    if (this.cache.exists(contractName)) {
+      // Contract has already been cached
+      return await this.cache.get(contractName);
+    }
 
+    // Query sources for contract
+    const contracts = await this.querySourcesForContract(contractName);
     if (contracts.length > 1) {
       throw new Error(`Found more than one contract with name ${contractName}`);
     }
-
     if (contractName.length === 0) {
       throw new Error(`${contractName} could not be found.`);
     }
 
+    // Use only the first (and only) encountered contract
     const contract = contracts[0];
     return this.cache.add(contract);
   }
@@ -107,6 +97,7 @@ export class ContractRepo {
       queryPromises.push(getPromise);
     }
 
+    // BLock until all sources have returned a list of contracts
     await Promise.all(queryPromises);
 
     return found;

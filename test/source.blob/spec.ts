@@ -92,5 +92,7 @@ if (process.env["TEST_BLOB"] == "1") {
         });
     });
     
+} else {
+    console.log("Azure Blob Storage Source testing is disabled.");
 }
 
