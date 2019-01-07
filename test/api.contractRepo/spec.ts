@@ -1,5 +1,6 @@
 import "mocha";
 import * as assert from "assert";
+import {assertThrowsAsync} from "../helpers/asyncthrow";
 import * as setup from "./setup";
 import { ContractRepo } from "eth-transaction-proxy";
 import { ContractCache } from "eth-transaction-proxy/lib/internal/ContractCache"; 
@@ -76,8 +77,9 @@ describe("ContractRepo", () => {
     });
 
     it("should fail with a contract that doesn't exist", async () => {
-      let badContract = await contractRepoAll.getContractABI("BadName");
-      assert.equal(badContract, undefined);
+      await assertThrowsAsync(
+        async() => await contractRepoAll.getContractABI("BadName"),
+        "Should have failed");
     });
   });
 

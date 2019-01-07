@@ -66,7 +66,7 @@ export class ContractRepo {
     if (contracts.length > 1) {
       throw new Error(`Found more than one contract with name ${contractName}`);
     }
-    if (contractName.length === 0) {
+    if (contracts.length === 0) {
       throw new Error(`${contractName} could not be found.`);
     }
 
