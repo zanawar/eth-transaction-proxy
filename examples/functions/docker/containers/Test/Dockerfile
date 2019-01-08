@@ -1,17 +1,18 @@
-FROM node:10
+FROM node:11.6
 
-COPY ./ /usr/src/app/
+COPY package.json /usr/notary/
+COPY tsconfig.json /usr/notary/
+COPY tslint.json /usr/notary/
 
-ENV NODE_ENV dev
-
-WORKDIR /usr/src/app
-RUN npm update
-RUN npm install
-
-WORKDIR /usr/src/app/api
-RUN npm install
+COPY ./src/ /usr/notary/src/
+WORKDIR /usr/notary/src
+RUN npm install --unseafe-perm
 RUN npm run build
 
-WORKDIR /usr/src/app/test
-RUN npm install
-CMD npm run ${TEST}
+COPY ./test/ /usr/notary/test/
+WORKDIR /usr/notary/test
+RUN npm install --unsafe-perm
+RUN npm run build
+
+WORKDIR /usr/notary/bin/test
+CMD npm run test-all-ci
