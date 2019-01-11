@@ -4,7 +4,7 @@ import { TransactionReceipt } from "web3/types";
 import { Config, TestTransaction } from "./setup";
 
 export const test = (config: Config) => {
-  describe("submitTransaction(signedTransactionHex)", () => {
+  describe("submit(signedTransactionHex)", () => {
 
     let web3: any;
     let notary: any;
@@ -27,7 +27,7 @@ export const test = (config: Config) => {
             return web3.eth.accounts.signTransaction(transaction, accountPriv);
           })
           .then((signedTx: any) => {
-            resolve(notary.submitTransaction(signedTx.rawTransaction));
+            resolve(notary.submit(signedTx.rawTransaction));
           })
           .catch(reject);
       });
@@ -49,7 +49,7 @@ export const test = (config: Config) => {
         web3.eth.accounts.signTransaction(config.addAddressMappingTest.package, accountPriv)
           .then((signedTx: any) => {
             signedTx.rawTransaction = signedTx.rawTransaction.replace("4", "2");
-            return notary.submitTransaction(signedTx.rawTransaction);
+            return notary.submit(signedTx.rawTransaction);
           })
           .then((transactionReceipt: TransactionReceipt) => {
             assert.fail("Error: This shouldn't succeed.");
@@ -63,7 +63,7 @@ export const test = (config: Config) => {
         const privateKey = accountPriv.replace("2", "A");
         web3.eth.accounts.signTransaction(config.addAddressMappingTest.package, privateKey)
           .then((signedTx: any) => {
-            return notary.submitTransaction(signedTx.rawTransaction);
+            return notary.submit(signedTx.rawTransaction);
           })
           .then((transactionReceipt: TransactionReceipt) => {
             assert.fail("Error: This shouldn't succeed.");

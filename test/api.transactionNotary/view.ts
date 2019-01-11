@@ -5,7 +5,7 @@ import { MethodTests } from "./methodTests";
 import { IViewConfig} from "eth-transaction-proxy/lib/interfaces/IViewConfig";
 
 export const test = (config: Config) => {
-  describe("submitView(config)", () => {
+  describe("view(config)", () => {
 
     let notary: any;
     let methodTests: any;
@@ -28,7 +28,7 @@ export const test = (config: Config) => {
           arguments: transaction.arguments
         };
 
-        notary.submitView(viewConfig).then((actual: any) => {
+        notary.view(viewConfig).then((actual: any) => {
           assert.equal(expected, actual);
           resolve();
         }).catch(reject);

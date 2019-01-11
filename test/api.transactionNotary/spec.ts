@@ -2,9 +2,9 @@ import "mocha";
 import * as assert from "assert";
 import * as setup from "./setup";
 import { Config } from "./setup";
-import * as createTransaction from "./createTransaction";
-import * as submitTransaction from "./submitTransaction";
-import * as submitView from "./submitView";
+import * as create from "./create";
+import * as submit from "./submit";
+import * as view from "./view";
 import { TransactionNotary } from "eth-transaction-proxy";
 
 let config = new Config();
@@ -46,9 +46,8 @@ describe("TransactionNotary", () => {
         new TransactionNotary(contractRepo, "foo", undefined, (result: Promise<boolean>) => {
           result.then((success) => {
             if (success) {
-              assert.fail("Error: This should fail.");
+              reject();
             }
-            resolve();
           })
           .catch((err) => {
             resolve();
@@ -56,29 +55,12 @@ describe("TransactionNotary", () => {
         });
       });
     });
-
-    it("fails when the connections string is empty", () => {
-      return new Promise((resolve, reject) => {
-        new TransactionNotary(contractRepo, "", undefined, (result: Promise<boolean>) => {
-          result.then((success) => {
-            if (success) {
-              assert.fail("Error: This should fail.");
-            }
-            resolve();
-          })
-          .catch((err) => {
-            resolve();
-          });
-        });
-      });
-    });
-
   });
 
-  createTransaction.test(config);
+  create.test(config);
 
-  submitTransaction.test(config);
+  submit.test(config);
 
-  submitView.test(config);
+  view.test(config);
 
 });

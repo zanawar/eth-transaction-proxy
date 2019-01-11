@@ -5,7 +5,7 @@ import { Config, TestTransaction } from "./setup";
 import { testBedContract } from "../common.setup";
 
 export const test = (config: Config) => {
-  describe("createTransaction(from, contractName, method, argumentPayload)", () => {
+  describe("create(from, contractName, method, argumentPayload)", () => {
 
     const extraGas = 1000;
 
@@ -62,7 +62,7 @@ export const test = (config: Config) => {
 
     const runTest = (methodTests: any, test: TestTransaction) => {
       return new Promise((resolve, reject) => {
-        notary.createTransaction(methodTests.transaction)
+        notary.create(methodTests.transaction)
         .then((transactionPackage: any) => {
           const signature = methodTests.signature;
           const inputs = methodTests.inputs;
@@ -118,7 +118,7 @@ export const test = (config: Config) => {
 
    it("testOverload(value, other) transaction created successfully", () => {
        return new Promise((resolve, reject) => {
-        notary.createTransaction({
+        notary.create({
           from: accountAddr,
           to: contractAddress,
           contractName: testBedContract,
@@ -145,7 +145,7 @@ export const test = (config: Config) => {
 
     it("fails when creating a transaction for a 'view' method", () => {
       return new Promise((resolve, reject) => {
-        notary.createTransaction({
+        notary.create({
           from: accountAddr,
           to: contractAddress,
           contractName: testBedContract,
