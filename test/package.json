@@ -51,7 +51,7 @@
         "tslint": "^5.11.0",
         "typedarray-to-buffer": "^3.1.5",
         "typescript": "^3.1.3",
-        "web3": "^1.0.0-beta.36",
+        "web3": "1.0.0-beta.36",
         "yaeti": "^1.0.2"
     }
 }

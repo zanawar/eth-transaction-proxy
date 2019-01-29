@@ -19,6 +19,6 @@
   "dependencies": {
     "azure-storage": "^2.10.2",
     "find": "^0.2.9",
-    "web3": "^1.0.0-beta.36"
+    "web3": "1.0.0-beta.36"
   }
 }
