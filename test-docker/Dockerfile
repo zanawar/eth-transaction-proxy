@@ -6,7 +6,7 @@ COPY tslint.json /usr/notary/
 
 COPY ./src/ /usr/notary/src/
 WORKDIR /usr/notary/src
-RUN npm install --unseafe-perm
+RUN npm install --unsafe-perm
 RUN npm run build
 
 COPY ./test/ /usr/notary/test/

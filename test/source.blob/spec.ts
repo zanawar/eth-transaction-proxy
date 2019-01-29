@@ -1,16 +1,17 @@
 import "mocha";
 import * as assert from "assert";
 import { AzureBlobContractSource } from "eth-transaction-proxy";
+import * as setup from "./setup";
 
 const containerName = "testcontracts";
-const contractName = "Migrations";
+const contractName = setup.contractName1;
 let connectionString = "";
 let contractSource: AzureBlobContractSource;
 
 // Only actually run blob tests if the environment variable is set to
 if (process.env["TEST_BLOB"] == "1") {
 
-    before("Setup blob storage connector", () => {
+    before("Setup blob storage connector", async () => {
         let env = process.env["AZURE_STORAGE_CONNECTION_STRING"];
         if (env) {
             connectionString = env;
@@ -19,18 +20,19 @@ if (process.env["TEST_BLOB"] == "1") {
         }
     
         contractSource = new AzureBlobContractSource(connectionString, containerName);
+        await setup.prepareBlobStorage(connectionString, containerName);
     });
     
     describe("AzureBlobContractSource", () => {
         describe("constructor", () => {
     
-            it("should connect to blob storage", () => {
+            it("should accept valid connection string", () => {
                 assert.doesNotThrow(() => {
                     new AzureBlobContractSource(connectionString, containerName);
                 });
             });
     
-            it("should not connect to blob storage", () => {
+            it("should reject invalid connection string", () => {
                 const connectionString = 'abcd';
     
                 assert.throws(() => {
@@ -38,7 +40,7 @@ if (process.env["TEST_BLOB"] == "1") {
                 });
             });
     
-            it("container does not exist", () => {
+            it("rejects invalid container", () => {
     
                 const containerName = 'doesnotexist';
                 contractSource = new AzureBlobContractSource(connectionString, containerName);
@@ -50,14 +52,10 @@ if (process.env["TEST_BLOB"] == "1") {
                 .catch((err: Error) => assert.fail(err.message));
             });
     
-            it("container does exist", () => {
-                contractSource = new AzureBlobContractSource(connectionString, containerName);
-    
-                return contractSource.validateConnection()
-                .then((result) => {
-                    assert.equal(result, true);
-                })
-                .catch((err: Error) => assert.fail(err.message));
+            it("accepts valid conatiner", async () => {
+              contractSource = new AzureBlobContractSource(connectionString, containerName);
+  
+              assert.equal(await contractSource.validateConnection(), true);
             });
         });
     
