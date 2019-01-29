@@ -9,10 +9,10 @@ const isAddress = Web3.utils.isAddress;
 // TODO: Support querying an address for the ABI, instead of using ABI files
 // // we should support using an address in the ABI file, or being given one.
 
-// TODO: Support creating a TransactionNotary without a ContractRepo, that way
+// TODO: Support creating a TransactionProxy without a ContractRepo, that way
 // // you don't have to create one if you're just submitting a transaction.
 
-export class TransactionNotary {
+export class TransactionProxy {
   private contractRepo: ContractRepo | undefined;
   private web3: Web3;
 
@@ -46,7 +46,7 @@ export class TransactionNotary {
   */
   public async create(config: ITransactionConfig): Promise<any> {
     if (this.contractRepo === undefined) {
-      throw Error("No Contract Repo has been set for the Transaction Notary.");
+      throw Error("No Contract Repo has been set for the Transaction Proxy.");
     }
 
     if (!isAddress(config.from) || !isAddress(config.to)) {
@@ -116,11 +116,11 @@ export class TransactionNotary {
   */
   public async view(config: IViewConfig): Promise<any> {
     if (this.contractRepo === undefined) {
-      throw Error("No Contract Repo has been set for the Transaction Notary.");
+      throw Error("No Contract Repo has been set for the Transaction Proxy.");
     }
 
     if (!this.web3.currentProvider) {
-      throw Error(`No web3 provider has been set for the Transaction Notary.`);
+      throw Error(`No web3 provider has been set for the Transaction Proxy.`);
     }
 
     if (!isAddress(config.to)) {

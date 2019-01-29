@@ -1,66 +1,57 @@
 {
-  "name": "transaction-notary-test",
-  "version": "0.1.0",
-  "config": {
-    "unsafe-perm":true
-  },
-  "scripts": {
-    "tsc": "tsc --skipLibCheck",
-    "build": "npm run tsc && node ./tools/post-build.js",
-    "compile": "cd ../bin/test && npm install --unsafe-perm && npm install ../eth-transaction-proxy --unsafe-perm",
-    
-    "test-all": "npm run test-source-all && npm run test-internal && npm run test-api-all",
-    "test-all-ci": "npm run test-source-all-ci && npm run test-internal-ci && npm run test-api-all-ci",
-
-    "test-source-all": "npm run test-source-folder && npm run test-source-blob",
-    "test-source-folder": "mocha ./source.folder/spec.js --exit --timeout 10000",
-    "test-source-blob": "mocha ./source.blob/spec.js --exit --timeout 10000",
-
-    "test-internal" : "mocha ./internal.contractCache --exit --timeout 10000",
-
-    "test-api-all": "npm run test-api-contractRepo && npm run test-api-transactionNotary",
-    "test-api-transactionNotary": "mocha ./api.transactionNotary/spec.js --exit --timeout 10000",
-    "test-api-contractRepo": "mocha ./api.contractRepo/spec.js --exit --timeout 10000",
-
-    "test-source-all-ci": "npm run test-source-folder-ci && npm run test-source-blob-ci",
-    "test-source-folder-ci": "mocha ./source.folder/spec.js --exit --timeout 10000 --reporter mocha-junit-reporter --reporter-options mochaFile=./source.folder-results.xml",
-    "test-source-blob-ci": "mocha ./source.blob/spec.js --exit --timeout 10000 --reporter mocha-junit-reporter --reporter-options mochaFile=./source.blob-results.xml",
-
-    "test-internal-ci" : "mocha ./internal.contractCache --exit --timeout 10000 --reporter mocha-junit-reporter --reporter-options mochaFile=./internal-results.xml",
-
-    "test-api-all-ci": "npm run test-api-contractRepo-ci && npm run test-api-transactionNotary-ci",
-    "test-api-transactionNotary-ci": "mocha ./api.transactionNotary/spec.js --exit --timeout 10000 --reporter mocha-junit-reporter  --reporter-options mochaFile=./api.transactionNotary-results.xml",
-    "test-api-contractRepo-ci": "mocha ./api.contractRepo/spec.js --exit --timeout 10000 --reporter mocha-junit-reporter  --reporter-options mochaFile=./api.contractRepo-results.xml"
-
-
-  },
-  "dependencies": {
-    "@types/find": "^0.2.1",
-    "@types/ganache-core": "^2.1.1",
-    "@types/mkdirp": "^0.5.2",
-    "@types/mocha": "^5.2.5",
-    "@types/ncp": "^2.0.1",
-    "@types/request": "^2.48.1",
-    "@types/rimraf": "^2.0.2",
-    "@types/web3": "1.0.12",
-    "azure-storage": "^2.10.2",
-    "child_process": "^1.0.2",
-    "find": "^0.2.9",
-    "ganache-core": "^2.2.1",
-    "har-validator": "^5.1.3",
-    "mkdirp": "^0.5.1",
-    "mocha": "^5.2.0",
-    "mocha-junit-reporter": "^1.18.0",
-    "ncp": "^2.0.0",
-    "npm-run": "^5.0.1",
-    "request": "^2.88.0",
-    "rimraf": "^2.6.2",
-    "truffle": "^4.1.14",
-    "ts-node": "^7.0.1",
-    "tslint": "^5.11.0",
-    "typedarray-to-buffer": "^3.1.5",
-    "typescript": "^3.1.3",
-    "web3": "^1.0.0-beta.36",
-    "yaeti": "^1.0.2"
-  }
+    "name": "transaction-notary-test",
+    "version": "0.1.0",
+    "config": {
+        "unsafe-perm": true
+    },
+    "scripts": {
+        "tsc": "tsc --skipLibCheck",
+        "build": "npm run tsc && node ./tools/post-build.js",
+        "compile": "cd ../bin/test && npm install --unsafe-perm && npm install ../eth-transaction-proxy --unsafe-perm",
+        "test-all": "npm run test-source-all && npm run test-internal && npm run test-api-all",
+        "test-all-ci": "npm run test-source-all-ci && npm run test-internal-ci && npm run test-api-all-ci",
+        "test-source-all": "npm run test-source-folder && npm run test-source-blob",
+        "test-source-folder": "mocha ./source.folder/spec.js --exit --timeout 10000",
+        "test-source-blob": "mocha ./source.blob/spec.js --exit --timeout 10000",
+        "test-internal": "mocha ./internal.contractCache --exit --timeout 10000",
+        "test-api-all": "npm run test-api-contractRepo && npm run test-api-transactionProxy",
+        "test-api-transactionProxy": "mocha ./api.transactionProxy/spec.js --exit --timeout 10000",
+        "test-api-contractRepo": "mocha ./api.contractRepo/spec.js --exit --timeout 10000",
+        "test-source-all-ci": "npm run test-source-folder-ci && npm run test-source-blob-ci",
+        "test-source-folder-ci": "mocha ./source.folder/spec.js --exit --timeout 10000 --reporter mocha-junit-reporter --reporter-options mochaFile=./source.folder-results.xml",
+        "test-source-blob-ci": "mocha ./source.blob/spec.js --exit --timeout 10000 --reporter mocha-junit-reporter --reporter-options mochaFile=./source.blob-results.xml",
+        "test-internal-ci": "mocha ./internal.contractCache --exit --timeout 10000 --reporter mocha-junit-reporter --reporter-options mochaFile=./internal-results.xml",
+        "test-api-all-ci": "npm run test-api-contractRepo-ci && npm run test-api-transactionProxy-ci",
+        "test-api-transactionProxy-ci": "mocha ./api.transactionProxy/spec.js --exit --timeout 10000 --reporter mocha-junit-reporter  --reporter-options mochaFile=./api.TransactionProxy-results.xml",
+        "test-api-contractRepo-ci": "mocha ./api.contractRepo/spec.js --exit --timeout 10000 --reporter mocha-junit-reporter  --reporter-options mochaFile=./api.contractRepo-results.xml"
+    },
+    "dependencies": {
+        "@types/find": "^0.2.1",
+        "@types/ganache-core": "^2.1.1",
+        "@types/mkdirp": "^0.5.2",
+        "@types/mocha": "^5.2.5",
+        "@types/ncp": "^2.0.1",
+        "@types/request": "^2.48.1",
+        "@types/rimraf": "^2.0.2",
+        "@types/web3": "1.0.12",
+        "azure-storage": "^2.10.2",
+        "child_process": "^1.0.2",
+        "find": "^0.2.9",
+        "ganache-core": "^2.2.1",
+        "har-validator": "^5.1.3",
+        "mkdirp": "^0.5.1",
+        "mocha": "^5.2.0",
+        "mocha-junit-reporter": "^1.18.0",
+        "ncp": "^2.0.0",
+        "npm-run": "^5.0.1",
+        "request": "^2.88.0",
+        "rimraf": "^2.6.2",
+        "truffle": "^4.1.14",
+        "ts-node": "^7.0.1",
+        "tslint": "^5.11.0",
+        "typedarray-to-buffer": "^3.1.5",
+        "typescript": "^3.1.3",
+        "web3": "^1.0.0-beta.36",
+        "yaeti": "^1.0.2"
+    }
 }

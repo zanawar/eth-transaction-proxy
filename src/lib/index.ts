@@ -1,3 +1,4 @@
 export * from "./ContractRepo";
-export * from "./TransactionNotary";
+export * from "./TransactionProxy";
 export * from "./contract-sources";
+export * from "./interfaces";

@@ -15,4 +15,4 @@ RUN npm install --unsafe-perm
 RUN npm run build
 
 WORKDIR /usr/notary/bin/test
-CMD npm run test-all-ci
+CMD npm run test-all

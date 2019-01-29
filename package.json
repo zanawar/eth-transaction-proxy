@@ -9,7 +9,7 @@
     "build-all": "npm run build && npm run build-test",
     "test": "cd ./bin/test && npm run test-all",
     "test-ci": "cross-env TEST=test-all-ci npm run test-docker-run",
-    "test-docker-run": "cd ./docker/compose/Test && docker-compose up --build --abort-on-container-exit"
+    "test-docker": "cd ./test-docker && docker-compose up --build --abort-on-container-exit"
   },
   "devDependencies": {
     "cross-env": "^5.2.0",

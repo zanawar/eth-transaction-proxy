@@ -13,7 +13,7 @@
   - run against blob emulator instead of live blob in azure
   - improve coverage, it only does happy path right now...
 
-- Transaction Notary Error Handling
+- Transaction Proxy Error Handling
   - Better solidity method overloading errors
 
 - Functions

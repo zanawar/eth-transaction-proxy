@@ -5,7 +5,7 @@ import { Config } from "./setup";
 import * as create from "./create";
 import * as submit from "./submit";
 import * as view from "./view";
-import { TransactionNotary } from "eth-transaction-proxy";
+import { TransactionProxy } from "eth-transaction-proxy";
 
 let config = new Config();
 
@@ -13,7 +13,7 @@ before("Build contracts, standup network, setup contractRepo...", () => {
   return setup.setup(config);
 });
 
-describe("TransactionNotary", () => {
+describe("TransactionProxy", () => {
 
   describe("constructor", () => {
 
@@ -27,7 +27,7 @@ describe("TransactionNotary", () => {
 
     it("succeeds in the normal case", () => {
       return new Promise((resolve, reject) => {
-        config.notary = new TransactionNotary(contractRepo, "", web3, (result: Promise<boolean>) => {
+        config.notary = new TransactionProxy(contractRepo, "", web3, (result: Promise<boolean>) => {
           result.then((success) => {
             if (!success) {
               assert.fail("Error: Failed to connect.");
@@ -43,7 +43,7 @@ describe("TransactionNotary", () => {
 
     it("fails when the network string is invalid", () => {
       return new Promise((resolve, reject) => {
-        new TransactionNotary(contractRepo, "foo", undefined, (result: Promise<boolean>) => {
+        new TransactionProxy(contractRepo, "foo", undefined, (result: Promise<boolean>) => {
           result.then((success) => {
             if (success) {
               reject();

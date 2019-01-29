@@ -25,26 +25,8 @@ To test the Azure Blob contract source, either an Azure Storage Account or Azure
 Set the environment variable `TEST_BLOB = 1` and `AZURE_STORAGE_CONNECTION_STRING` set to an Azure connection string.
 
 # Running Tests From Docker
-## Inside Docker  
-`npm run test`  
-
-## Outside Docker  
-### 1  
-`cd docker/compose/FunctionsLocalBlob`  
-setup .env file (see .env-example)  
-`docker-compose up --build`  
-
-This stands up 3 containers:  
-Ganache - Blockchain  
-Blob - Azure Blob Emulator  
-Functions - Azure Functions Host running ./functions  
-
-### 2  
-In another terminal from root directory:  
-`cd test`  
-`set NOTARY_URL=http://localhost:8585`  
-`set RPC_URL=http://localhost:8545`  
-`set BLOB_CONTAINER_NAME=contracts`  
-`set BLOB_CONNECT_STR=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://localhost:10000/devstoreaccount1;`  
-
-NOTE: This is assuming the notary is on port `8585`, ganache is on `8545`, and blob is on `10000`.  
+Run the command:
+```
+test-docker
+```
+Docker will build and run the test container.

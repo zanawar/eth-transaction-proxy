@@ -10,6 +10,10 @@ RUN apt-get update -qq && \
       ca-certificates \
       git 
 
-COPY ./functions/ /home/site/wwwroot
+COPY ./bin/eth-transaction-proxy/ /home/lib/eth-transaction-proxy/
+
+COPY ./examples/functions/src/ /home/site/wwwroot
 WORKDIR /home/site/wwwroot
-RUN npm install
+
+RUN npm install /home/lib/eth-transaction-proxy/
+

@@ -10,7 +10,7 @@ export function EncodeFunctionCall(web3: Web3, abi: any[], args: any, method: st
   });
 
   if (methodDecls.length === 0) {
-    throw Error(`Error: Unable to find method named ${method} with argument count ${argsCount}.`);
+    throw Error(`Unable to find method named ${method} with argument count ${argsCount}.`);
   }
 
   if (methodDecls.length > 1) {
@@ -26,7 +26,7 @@ export function EncodeFunctionCall(web3: Web3, abi: any[], args: any, method: st
 
     if (methodDecls.length > 1) {
       throw Error(
-        `Error: Found more than one method named ${method} with argument names ${JSON.stringify(argKeys)}.`,
+        `Found more than one method named ${method} with argument names ${JSON.stringify(argKeys)}.`,
       );
     }
   }
@@ -35,8 +35,8 @@ export function EncodeFunctionCall(web3: Web3, abi: any[], args: any, method: st
 
   if (methodDecl.stateMutability === "view") {
     throw new Error(
-      `Error: The method you're forming a transaction does not mutate state, and is a view method. ` +
-      `Please use the "submitView" functionality within the TransactionNotary instead.`,
+      `The method you're forming a transaction does not mutate state, and is a view method. ` +
+      `Please use the "submitView" functionality within the TransactionProxy instead.`,
     );
   }
 

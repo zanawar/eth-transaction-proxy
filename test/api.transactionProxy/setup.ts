@@ -3,7 +3,7 @@ import Web3 = require("web3");
 import * as ganache from "ganache-core";
 import * as common from "../common.setup";
 import { testBedContract } from "../common.setup";
-import { TransactionNotary, ContractRepo, FolderContractSource } from "eth-transaction-proxy";
+import { TransactionProxy, ContractRepo, FolderContractSource } from "eth-transaction-proxy";
 
 export class TestTransaction {
   package: any;
@@ -12,7 +12,7 @@ export class TestTransaction {
 
 export class Config {
   web3!: Web3;
-  notary!: TransactionNotary;
+  notary!: TransactionProxy;
   contractRepo!: ContractRepo;
 
   accountAddr!: string;
