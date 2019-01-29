@@ -20,13 +20,9 @@ The Transaction Notary library tests will build and output into the `bin/tests/`
 From the root directory, run the command:  
 `npm run tests`
 
-# Blob Tests
-To test the Azure Blob contract source, either an Azure Storage Account or Azure Storage Emulator must be available.  
-Set the environment variable `TEST_BLOB = 1` and `AZURE_STORAGE_CONNECTION_STRING` set to an Azure connection string.
-
-# Running Tests From Docker
+# Running Tests with Docker
 Run the command:
 ```
-test-docker
+npm run test-docker
 ```
 Docker will build and run the test container.
