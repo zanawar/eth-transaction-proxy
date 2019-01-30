@@ -36,6 +36,7 @@
         "@types/web3": "1.0.12",
         "azure-storage": "^2.10.2",
         "child_process": "^1.0.2",
+        "cpr": "^3.0.1",
         "find": "^0.2.9",
         "ganache-core": "^2.2.1",
         "har-validator": "^5.1.3",
@@ -55,5 +56,8 @@
         "typescript": "^3.1.3",
         "web3": "1.0.0-beta.36",
         "yaeti": "^1.0.2"
+    },
+    "devDependencies": {
+        "copy-node-modules": "^1.1.1"
     }
 }
