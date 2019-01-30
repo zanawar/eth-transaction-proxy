@@ -1,8 +1,8 @@
 {
   "name": "eth-transaction-proxy",
   "version": "0.1.0-preview",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./index.js",
+  "types": "./index.d.ts",
   "scripts": {
     "tslint": "tslint -p . -c tslint.json --exclude examples/**/*.ts --exclude tests/**/*.ts",
     "tsc": "tsc --skipLibCheck",
