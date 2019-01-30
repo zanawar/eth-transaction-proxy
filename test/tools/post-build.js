@@ -11,7 +11,7 @@ async function run() {
   let shouldCopy = true;
 
   if (fs.existsSync(targetPackageJson)) {
-    console.log("package.json already exists in bin folder.");
+    console.log('package.json already exists in bin folder.');
     let localStats = fs.statSync(localPackageJson);
     let targetStats = fs.statSync(targetPackageJson);
 
@@ -19,18 +19,18 @@ async function run() {
     if (targetStats.ctimeMs > localStats.ctimeMs) {
       shouldCopy = false;
     } else {
-      console.log("package.json has changed and needs to be updated.");
+      console.log('package.json has changed and needs to be updated.');
     }
   }
 
   if (shouldCopy) {
-    console.log("Copying package.json to bin folder");
+    console.log('Copying package.json to bin folder');
     fs.copyFileSync(localPackageJson, targetPackageJson);
   }
 
 
 
-  console.log("Copying contracts to bin folder.");
+  console.log('Copying contracts to bin folder.');
   await new Promise((resolve, reject) => {
     cpr('./contracts',
     '../bin/test/contracts',
@@ -47,9 +47,9 @@ async function run() {
   })
 
   if (shouldCopy) {
-    console.log("Copying node modules...");
-    const srcDir = "./";
-    const destDir = "../bin/test";
+    console.log('Copying node modules...');
+    const srcDir = './';
+    const destDir = '../bin/test';
     
     await new Promise((resolve, reject) => {
       copyNodeModules(srcDir,
@@ -66,7 +66,7 @@ async function run() {
         });
     });
 
-    console.log("Copying node modules bin...");
+    console.log('Copying node modules bin...');
     await new Promise((resolve, reject) => {
       cpr('./node_modules/.bin',
         '../bin/test/node_modules/.bin',
@@ -80,21 +80,20 @@ async function run() {
       
           resolve();
       });
-      
-    })
+    });
 
-    console.log("Installing needed packages for tests...");
+    console.log('Installing needed packages for tests...');
     try {
       // Run the `npm run compile` script which will re-install
       // npm packages required by the tests
-      const postBuildCommand = "npm run compile";
+      const postBuildCommand = 'npm run compile';
       let output = execSync(postBuildCommand, {
         cwd: process.cwd(),
         stdio: 'inherit'
       });
-      console.log("Install success.");
+      console.log('Build success.');
     } catch (ex) {
-      console.log("An error occurred when installing npm packages for the compiled tests!");
+      console.log('An error occurred when installing npm packages for the compiled tests!');
     }
   }
 }
