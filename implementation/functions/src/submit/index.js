@@ -1,5 +1,5 @@
 // REST API
-// POST notary/transaction/submit
+// POST /submit
 // body: {
 //   rawSignedTransaction: string
 // }
@@ -25,7 +25,7 @@ module.exports = async (context, req) => {
     return;
   }
 
-  let proxy = await common.createNotary(context);
+  let proxy = await common.createProxy(context);
   let receipt;
   try {
     receipt = await proxy.submitTransaction(rawTransaction);

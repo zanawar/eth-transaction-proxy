@@ -1,7 +1,7 @@
 {
-  "name": "transaction-notary-create-transaction",
+  "name": "eth-transaction-proxy-azure-function",
   "version": "0.0.1",
   "dependencies": {
-    "transaction-notary-api": "latest"
+    "eth-transaction-proxy": "latest"
   }
 }

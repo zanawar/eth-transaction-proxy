@@ -1,5 +1,5 @@
-# Transaction Notary Testing
-The Transaction Notary tests require a separate (but similar) install and build pipeline.
+# Transaction Proxy Testing
+The Transaction Proxy tests require a separate (but similar) install and build pipeline.
 
 **Run all commands from the projects root directory**  
 (*Not* from `./test`)
@@ -14,7 +14,7 @@ From the root directory, run the command:
 # Build
 From the root directory, run the command:  
 `npm run build-test`  
-The Transaction Notary library tests will build and output into the `bin/tests/` directory.
+The Transaction Proxy library tests will build and output into the `bin/tests/` directory.
 
 # Running Tests
 From the root directory, run the command:  

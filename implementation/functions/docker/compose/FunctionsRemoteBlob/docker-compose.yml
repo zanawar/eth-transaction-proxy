@@ -7,7 +7,7 @@ services:
       - "8545:8545"
     restart: unless-stopped
 
-  notary:
+  proxy:
     build:
       dockerfile: ./docker/containers/Functions/Dockerfile
       context: ../../../

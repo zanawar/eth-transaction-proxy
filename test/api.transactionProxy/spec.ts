@@ -27,7 +27,7 @@ describe("TransactionProxy", () => {
 
     it("succeeds in the normal case", () => {
       return new Promise((resolve, reject) => {
-        config.notary = new TransactionProxy(contractRepo, "", web3, (result: Promise<boolean>) => {
+        config.proxy = new TransactionProxy(contractRepo, "", web3, (result: Promise<boolean>) => {
           result.then((success) => {
             if (!success) {
               assert.fail("Error: Failed to connect.");

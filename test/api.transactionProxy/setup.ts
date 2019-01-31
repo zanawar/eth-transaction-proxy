@@ -12,7 +12,7 @@ export class TestTransaction {
 
 export class Config {
   web3!: Web3;
-  notary!: TransactionProxy;
+  proxy!: TransactionProxy;
   contractRepo!: ContractRepo;
 
   accountAddr!: string;

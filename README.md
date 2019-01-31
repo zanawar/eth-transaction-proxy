@@ -4,14 +4,45 @@ The Transaction Proxy aims to abstract away smart contract interactions to help 
 * Signed Transaction Submission
 * Smart Contract Data Viewing
 
-# Implementation
-The Transaction Proxy is implemented as a Node.JS library and must be consumed and exposed.
+# Using the library
+The Transaction Proxy code is packaged as a library which can be consumed as an npm library.  
+Included in this repository is an implementation of the library, exposed as a Web API using Azure Functions for Docker.
+
+## Example Usage
+Using the library in your own code may look like:
+```ts
+import { AzureBlobContractSource, ContractRepo, TransactionProxy } from "eth-transaction-proxy";
+
+const contractRepository = new ContractRepo([
+  new AzureBlobContractSource("connection-string", "container")
+]);
+const proxy = new TransactionProxy(contractRepostiory, "rpc_endpoint")
+
+// Call a smart contract view method
+let result = await proxy.view({
+  from: "0xsender",
+  to: "0xcontract_address",
+  contractName: "myContract",
+  method: "viewMethod",
+  arguments: null
+});
+
+// Create a transaction payload to call a smart contract method
+let payload = await proxy.create({
+  from: "0xsender",
+  to: "0xcontract_address",
+  contractName: "myContract",
+  method: "contractMethod",
+  arguments: null
+});
+
+```
 
 # Project Structure
 - src: Transaction Proxy library source code
 - test: Code modules to test the different features of the Transaction Proxy library
-- tools: Deployment and build tools
-- examples: Example implementations of the Transaction Proxy, view `examples/README.md` for more information.
+- test-docker: Dockerfile and compose for running tests inside a docker container.
+- implementation: Example implementations of the Transaction Proxy exposed as a Web API using Azure Functions.
 - bin: Build artifacts output *(This will be generated on build)*
 
 

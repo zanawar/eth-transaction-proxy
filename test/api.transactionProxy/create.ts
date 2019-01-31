@@ -10,14 +10,14 @@ export const test = (config: Config) => {
     const extraGas = 1000;
 
     let web3: any;
-    let notary: any;
+    let proxy: any;
     let accountAddr: string;
     let contractAddress: string;
     let methodTests: any;
 
     before("intialize helper variables...", () => {
       web3 = config.web3;
-      notary = config.notary;
+      proxy = config.proxy;
       accountAddr = config.accountAddr;
       contractAddress = config.contractAddress;
       methodTests = MethodTests(config);
@@ -62,7 +62,7 @@ export const test = (config: Config) => {
 
     const runTest = (methodTests: any, test: TestTransaction) => {
       return new Promise((resolve, reject) => {
-        notary.create(methodTests.transaction)
+        proxy.create(methodTests.transaction)
         .then((transactionPackage: any) => {
           const signature = methodTests.signature;
           const inputs = methodTests.inputs;
@@ -118,7 +118,7 @@ export const test = (config: Config) => {
 
    it("testOverload(value, other) transaction created successfully", () => {
        return new Promise((resolve, reject) => {
-        notary.create({
+        proxy.create({
           from: accountAddr,
           to: contractAddress,
           contractName: testBedContract,
@@ -145,7 +145,7 @@ export const test = (config: Config) => {
 
     it("fails when creating a transaction for a 'view' method", () => {
       return new Promise((resolve, reject) => {
-        notary.create({
+        proxy.create({
           from: accountAddr,
           to: contractAddress,
           contractName: testBedContract,

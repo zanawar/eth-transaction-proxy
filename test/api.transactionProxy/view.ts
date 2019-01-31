@@ -7,11 +7,11 @@ import { IViewConfig} from "eth-transaction-proxy/lib/interfaces/IViewConfig";
 export const test = (config: Config) => {
   describe("view(config)", () => {
 
-    let notary: any;
+    let proxy: any;
     let methodTests: any;
 
     before("initialize helper variables...", () => {
-      notary = config.notary;
+      proxy = config.proxy;
       methodTests = MethodTests(config);
     });
 
@@ -28,7 +28,7 @@ export const test = (config: Config) => {
           arguments: transaction.arguments
         };
 
-        notary.view(viewConfig).then((actual: any) => {
+        proxy.view(viewConfig).then((actual: any) => {
           assert.equal(expected, actual);
           resolve();
         }).catch(reject);

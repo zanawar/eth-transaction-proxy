@@ -15,10 +15,10 @@ services:
     environment:
       - executable=blob
 
-  notary:
+  proxy:
     build:
-      dockerfile: ./docker/containers/Functions/Dockerfile
-      context: ../../../
+      dockerfile: ./implementation/functions/docker/container/Dockerfile
+      context: ../../../../../
     depends_on:
       - ganache
       - blob

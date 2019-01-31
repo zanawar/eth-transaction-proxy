@@ -7,13 +7,13 @@ export const test = (config: Config) => {
   describe("submit(signedTransactionHex)", () => {
 
     let web3: any;
-    let notary: any;
+    let proxy: any;
     let accountAddr: string;
     let accountPriv: string;
 
     before("initialize helper variables...", () => {
       web3 = config.web3;
-      notary = config.notary;
+      proxy = config.proxy;
       accountAddr = config.accountAddr;
       accountPriv = config.accountPriv;
     });
@@ -27,7 +27,7 @@ export const test = (config: Config) => {
             return web3.eth.accounts.signTransaction(transaction, accountPriv);
           })
           .then((signedTx: any) => {
-            resolve(notary.submit(signedTx.rawTransaction));
+            resolve(proxy.submit(signedTx.rawTransaction));
           })
           .catch(reject);
       });
@@ -49,7 +49,7 @@ export const test = (config: Config) => {
         web3.eth.accounts.signTransaction(config.addAddressMappingTest.package, accountPriv)
           .then((signedTx: any) => {
             signedTx.rawTransaction = signedTx.rawTransaction.replace("4", "2");
-            return notary.submit(signedTx.rawTransaction);
+            return proxy.submit(signedTx.rawTransaction);
           })
           .then((transactionReceipt: TransactionReceipt) => {
             assert.fail("Error: This shouldn't succeed.");
@@ -63,7 +63,7 @@ export const test = (config: Config) => {
         const privateKey = accountPriv.replace("2", "A");
         web3.eth.accounts.signTransaction(config.addAddressMappingTest.package, privateKey)
           .then((signedTx: any) => {
-            return notary.submit(signedTx.rawTransaction);
+            return proxy.submit(signedTx.rawTransaction);
           })
           .then((transactionReceipt: TransactionReceipt) => {
             assert.fail("Error: This shouldn't succeed.");

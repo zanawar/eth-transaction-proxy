@@ -1,4 +1,4 @@
-const api = require("transaction-notary-api");
+const api = require("eth-transaction-proxy");
 
 const rpcUrl = process.env["RPC_URL"];
 const blobConnectStr = process.env["BLOB_CONNECT_STR"];
@@ -40,7 +40,7 @@ module.exports.createAzureBlobContractSource = (context) => {
   }
 }
 
-module.exports.createNotary = async (context) => {
+module.exports.createProxy = async (context) => {
   try {
     return await Promise((resolve, reject) => {
 
@@ -58,12 +58,12 @@ module.exports.createNotary = async (context) => {
       ]);
 
       // Create the TransactionProxy
-      const notary = new api.TransactionProxy(contractRepo, rpcUrl, undefined, (connected, web3) => {
+      const proxy = new api.TransactionProxy(contractRepo, rpcUrl, undefined, (connected, web3) => {
         connected.then((success) => {
           if (success) {
-            resolve(notary);
+            resolve(proxy);
           } else {
-            reject(new Error("Failed to create Notary"));
+            reject(new Error("Failed to create Transaction Proxy"));
           }
         })
         .catch((err) => {

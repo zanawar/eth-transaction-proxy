@@ -20,7 +20,7 @@ const getEnvVar = (name: string, defaultValue: string): string => {
 };
 
 before("Make sure the Azure Functions container is setup...", () => {
-  functionUrl = getEnvVar("NOTARY_URL", "http://localhost:8585");
+  functionUrl = getEnvVar("PROXY_URL", "http://localhost:8585");
   ganacheUrl = getEnvVar("RPC_URL", "http://localhost:8545");
   blobConnection = getEnvVar("BLOB_CONNECT_STR", "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://localhost:8555/devstoreaccount1;");
   blobContainer = getEnvVar("BLOB_CONTAINER_NAME", "contracts");
@@ -50,7 +50,7 @@ describe("AzFunctions", () => {
       };
 
       return new Promise((resolve, reject) => {
-        request.post(`${functionUrl}/notary/transaction/create`, {
+        request.post(`${functionUrl}/create`, {
           body: JSON.stringify(body)
         }, (err, res, body) => {
           if (err) {
@@ -75,7 +75,7 @@ describe("AzFunctions", () => {
               rawSignedTransaction: signed.rawTransaction
             };
 
-            request.post(`${functionUrl}/notary/transaction/submit`, {
+            request.post(`${functionUrl}/submit`, {
               body: JSON.stringify(body)
             }, (err, res, body) => {
               if (err) {
@@ -105,7 +105,7 @@ describe("AzFunctions", () => {
       };
 
       return new Promise((resolve, reject) => {
-        request.post(`${functionUrl}/notary/view/submit`, {
+        request.post(`${functionUrl}/submit`, {
           body: JSON.stringify(body)
         }, (err, res, body) => {
           if (err) {

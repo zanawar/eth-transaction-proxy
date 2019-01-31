@@ -21,6 +21,11 @@ async function run() {
     }
   }
 
+  if (fs.existsSync("../README.md")) {
+    console.log('Copying README.md');
+    fs.copyFileSync('../README.md', binFolder + '/README.md');
+  }
+
   if (shouldCopy) {
     console.log('Copying package json files');
     fs.copyFileSync('./package.json', binFolder + '/package.json');

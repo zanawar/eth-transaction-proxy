@@ -10,10 +10,20 @@ RUN apt-get update -qq && \
       ca-certificates \
       git 
 
-COPY ./bin/eth-transaction-proxy/ /home/lib/eth-transaction-proxy/
+COPY tsconfig.json /usr/proxy/
+COPY tslint.json /usr/proxy/
+COPY ./src/ /usr/proxy/src/
 
-COPY ./examples/functions/src/ /home/site/wwwroot
-WORKDIR /home/site/wwwroot
+WORKDIR /usr/proxy/src/
+RUN npm install --unsafe-perm
+RUN npm run build --unsafe-perm
 
-RUN npm install /home/lib/eth-transaction-proxy/
+WORKDIR /usr/proxy/bin/eth-transaction-proxy/
+RUN ls
+
+COPY ./implementation/functions/src/ /home/site/wwwroot
+
+WORKDIR /home/site/wwwroot/
+RUN npm install /usr/proxy/bin/eth-transaction-proxy/
+RUN npm install
 

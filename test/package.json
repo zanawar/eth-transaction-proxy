@@ -1,5 +1,5 @@
 {
-    "name": "transaction-notary-test",
+    "name": "transaction-proxy-test",
     "version": "0.1.0",
     "config": {
         "unsafe-perm": true
