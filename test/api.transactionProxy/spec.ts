@@ -25,37 +25,47 @@ describe("TransactionProxy", () => {
       web3 = config.web3;
     });
 
-    it("succeeds in the normal case", () => {
-      return new Promise((resolve, reject) => {
-        config.proxy = new TransactionProxy(contractRepo, "", web3, (result: Promise<boolean>) => {
-          result.then((success) => {
-            if (!success) {
-              assert.fail("Error: Failed to connect.");
-            }
-            resolve();
-          })
-          .catch((err) => {
-            reject(err);
-          });
-        });
+    it("Can be constructed with a web3 instance", () => {
+      return new Promise(async (resolve, reject) => {
+        config.proxy = new TransactionProxy(contractRepo, undefined, web3);
+        let connected = await config.proxy.testConnection()
+        if (!connected) {
+          reject();
+          return;
+        }
+
+        resolve();
       });
     });
 
-    it("fails when the network string is invalid", () => {
-      return new Promise((resolve, reject) => {
-        new TransactionProxy(contractRepo, "foo", undefined, (result: Promise<boolean>) => {
-          result.then((success) => {
-            if (success) {
-              reject();
-            }
-          })
-          .catch((err) => {
-            resolve();
-          });
-        });
-      });
+    it("Can be constructed with just an RPC endpoint", async () => {
+      new TransactionProxy(undefined, "foo");
     });
   });
+
+  describe("testConnection", () => {
+
+    let web3: any;
+
+    before("intialize helper variables...", () => {
+      web3 = config.web3;
+    });
+
+    it("fails when the rpc endpoint is invalid", async () => {
+      let proxy = new TransactionProxy(undefined, "foo", undefined);
+      if (await proxy.testConnection()) {
+        assert.fail("Should have failed!");
+      }
+    });
+
+    it("succeeds when the rpc endpoint is valid", async () => {
+      let proxy = new TransactionProxy(undefined, undefined, web3);
+      if (!await proxy.testConnection()) {
+        assert.fail("Should have passed!");
+      }
+    });
+
+  })
 
   create.test(config);
 

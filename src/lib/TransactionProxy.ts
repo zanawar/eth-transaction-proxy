@@ -16,12 +16,7 @@ export class TransactionProxy {
   private contractRepo: ContractRepo | undefined;
   private web3: Web3;
 
-  constructor(
-    contractRepo?: ContractRepo,
-    rpcUrl?: string,
-    web3?: Web3,
-    connectionTest?: (result: Promise<boolean>, web3: Web3) => void,
-  ) {
+  constructor(contractRepo?: ContractRepo, rpcUrl?: string, web3?: Web3) {
     this.contractRepo = contractRepo;
 
     if (web3) {
@@ -30,14 +25,17 @@ export class TransactionProxy {
       this.web3 = new Web3(new Web3.providers.HttpProvider(rpcUrl));
     } else {
       this.web3 = new Web3();
-      connectionTest = undefined;
     }
+  }
 
-    if (connectionTest) {
-      connectionTest(
-        this.web3.eth.net.isListening(),
-        this.web3,
-      );
+  /*
+  Test connection to RPC endpoint
+  */
+  public async testConnection(): Promise<boolean> {
+    try {
+      return await this.web3.eth.net.isListening();
+    } catch {
+      return false;
     }
   }
 
