@@ -18,58 +18,48 @@ export const test = (config: Config) => {
       accountPriv = config.accountPriv;
     });
 
-    const signAndSubmitTransaction = (transaction: any): Promise<TransactionReceipt> => {
-      return new Promise<TransactionReceipt>((resolve, reject) => {
-        // get the nonce once more
-        web3.eth.getTransactionCount(accountAddr)
-          .then((txCount: number) => {
-            transaction.nonce = txCount;
-            return web3.eth.accounts.signTransaction(transaction, accountPriv);
-          })
-          .then((signedTx: any) => {
-            resolve(proxy.submit(signedTx.rawTransaction));
-          })
-          .catch(reject);
-      });
+    const signAndSubmitTransaction = async (transaction: any): Promise<TransactionReceipt> => {
+      const nonce = await web3.eth.getTransactionCount(accountAddr);
+      transaction.nonce = nonce;
+      const signedTx = await web3.eth.accounts.signTransaction(transaction, accountPriv);
+      return await proxy.submit(signedTx.rawTransaction);
     }
 
-    const testTransaction = (test: TestTransaction): Promise<void> => {
-      return new Promise((resolve, reject) => {
-        signAndSubmitTransaction(test.package)
-          .then((transactionReceipt: TransactionReceipt) => {
-            test.receipt = transactionReceipt;
-            resolve();
-          })
-          .catch(reject);
-      })
+    const testTransaction = async (test: TestTransaction): Promise<void> => {
+      const receipt = await signAndSubmitTransaction(test.package);
+      test.receipt = receipt;
     }
 
-    it("fails when transaction is corrupted", () => {
-      return new Promise((resolve, reject) => {
-        web3.eth.accounts.signTransaction(config.addAddressMappingTest.package, accountPriv)
-          .then((signedTx: any) => {
-            signedTx.rawTransaction = signedTx.rawTransaction.replace("4", "2");
-            return proxy.submit(signedTx.rawTransaction);
-          })
-          .then((transactionReceipt: TransactionReceipt) => {
-            assert.fail("Error: This shouldn't succeed.");
-          })
-          .catch((err: Error) => resolve());
-      });
+    it("fails when transaction is corrupted", async () => {
+      let signedTx = await web3.eth.accounts.signTransaction(config.addAddressMappingTest.package, accountPriv);
+      signedTx.rawTransaction = signedTx.rawTransaction.replace("4", "2");
+
+      let failed = false;
+      try {
+        await proxy.submit(signedTx.rawTransaction);
+      } catch (e) {
+        failed = true;
+      }
+
+      if (!failed) {
+        assert.fail("This shouldn't succeed.");
+      }
     });
 
-    it("fails when signature is incorrect", () => {
-      return new Promise((resolve, reject) => {
-        const privateKey = accountPriv.replace("2", "A");
-        web3.eth.accounts.signTransaction(config.addAddressMappingTest.package, privateKey)
-          .then((signedTx: any) => {
-            return proxy.submit(signedTx.rawTransaction);
-          })
-          .then((transactionReceipt: TransactionReceipt) => {
-            assert.fail("Error: This shouldn't succeed.");
-          })
-          .catch((err: Error) => resolve());
-      });
+    it("fails when signature is incorrect", async () => {
+      const privateKey = accountPriv.replace("2", "A");
+      const signedTx = await web3.eth.accounts.signTransaction(config.addAddressMappingTest.package, privateKey);
+
+      let failed = false;
+      try {
+        await proxy.submit(signedTx.rawTransaction);
+      } catch (e) {
+        failed = true;
+      }
+
+      if (!failed) {
+        assert.fail("This shouldn't succeed.");
+      }
     });
 
     it("successfully submits the addAddressMapping(addr, str) transaction", () => {

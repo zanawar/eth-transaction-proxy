@@ -23,57 +23,43 @@ export const test = (config: Config) => {
       methodTests = MethodTests(config);
     });
 
-    const verifyTransactionPackage = (transactionPackage: any, signature: any, inputs: any[]): Promise<any> => {
-      return new Promise((resolve, reject) => {
-        assert.equal(transactionPackage.from, accountAddr);
-        assert.equal(transactionPackage.to, contractAddress);
+    const verifyTransactionPackage = async (transactionPackage: any, signature: any, inputs: any[]): Promise<any> => {
+      assert.equal(transactionPackage.from, accountAddr);
+      assert.equal(transactionPackage.to, contractAddress);
 
-        return web3.eth.getTransactionCount(accountAddr)
-        .then((nonce: number) => {
-          assert.equal(transactionPackage.nonce, nonce);
-          return web3.eth.getGasPrice();
-        })
-        .then((gasPrice: string) => {
-          assert.equal(transactionPackage.gasPrice, gasPrice);
-          return web3.eth.abi.encodeFunctionCall(signature, inputs);
-        })
-        .then((data: string) => {
-          assert.equal(transactionPackage.data, data);
+      const nonce = await web3.eth.getTransactionCount(accountAddr);
+      assert.equal(transactionPackage.nonce, nonce);
 
-          const tx = {
-            from: accountAddr,
-            to: contractAddress,
-            data: data
-          };
-          return web3.eth.estimateGas(tx);
-        })
-        .then((gasLimit: number) => {
-          if (transactionPackage.gasLimit > gasLimit) {
-            assert.equal(transactionPackage.gasLimit, gasLimit + extraGas);
-          } else {
-            assert.equal(transactionPackage.gasLimit, gasLimit);
-          }
+      const gasPrice = await web3.eth.getGasPrice();
+      assert.equal(transactionPackage.gasPrice, gasPrice);
 
-          resolve(transactionPackage);
-        })
-        .catch(reject);
-      });
+      const data = await web3.eth.abi.encodeFunctionCall(signature, inputs);
+      assert.equal(transactionPackage.data, data);
+
+      const tx = {
+        from: accountAddr,
+        to: contractAddress,
+        data: data
+      };
+      const gasLimit = web3.eth.estimateGas(tx);
+
+      if (transactionPackage.gasLimit > gasLimit) {
+        assert.equal(transactionPackage.gasLimit, gasLimit + extraGas);
+      } else {
+        assert.equal(transactionPackage.gasLimit, gasLimit);
+      }
+
+      return transactionPackage;
     }
 
-    const runTest = (methodTests: any, test: TestTransaction) => {
-      return new Promise((resolve, reject) => {
-        proxy.create(methodTests.transaction)
-        .then((transactionPackage: any) => {
-          const signature = methodTests.signature;
-          const inputs = methodTests.inputs;
-          return verifyTransactionPackage(transactionPackage, signature, inputs);
-        })
-        .then((transactionPackage: any) => {
-          test.package = transactionPackage;
-          resolve();
-        })
-        .catch(reject);
-      });
+    const runTest = async (method: any, test: TestTransaction) => {
+      const transactionPackage = await proxy.create(method.transaction);
+      const signature = method.signature;
+      const inputs = method.inputs;
+
+      await verifyTransactionPackage(transactionPackage, signature, inputs);
+
+      test.package = transactionPackage;
     }
 
     it("addAddressMapping(addr, str) transaction created successfully", () => {
@@ -116,8 +102,9 @@ export const test = (config: Config) => {
       return runTest(methodTests.modifybytes, config.modifybytesTest);
     });
 
-   it("testOverload(value, other) transaction created successfully", () => {
-       return new Promise((resolve, reject) => {
+    it("testOverload(value, other) transaction created successfully", () => {
+      let failed = false;
+      try {
         proxy.create({
           from: accountAddr,
           to: contractAddress,
@@ -128,11 +115,14 @@ export const test = (config: Config) => {
             other: 9
           }
         })
-        .then((transactionPackage: any) => {
-          assert.fail("Error: This shouldn't succeed");
-        })
-        .catch((err: Error) => resolve());
-      });
+      }
+      catch (e) {
+        failed = true;
+      }
+
+      if (!failed) {
+        assert.fail("Error: This shouldn't succeed");
+      }
     });
 
     it("testSpawnEventUint(value) transaction created successfully", () => {
@@ -143,8 +133,9 @@ export const test = (config: Config) => {
       return runTest(methodTests.testSpawnEventWithAddress, config.testSpawnEventWithAddressTest);
     });
 
-    it("fails when creating a transaction for a 'view' method", () => {
-      return new Promise((resolve, reject) => {
+    it("fails when creating a transaction for a 'view' method", async () => {
+      let failed = false;
+      try {
         proxy.create({
           from: accountAddr,
           to: contractAddress,
@@ -153,12 +144,15 @@ export const test = (config: Config) => {
           arguments: {
             addr: accountAddr
           }
-        })
-        .then((transactionPackage: any) => {
-          assert.fail("Error: This shouldn't succeed");
-        })
-        .catch((err: Error) => resolve());
-      });
+        });
+      }
+      catch (e) {
+        failed = true;
+      }
+
+      if (!failed) {
+        assert.fail("Error: This shouldn't succeed");
+      }
     });
   });
 }

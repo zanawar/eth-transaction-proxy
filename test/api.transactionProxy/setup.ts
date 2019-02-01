@@ -57,71 +57,61 @@ const web3Logger = {
 
 const web3NetId: number = 665;
 
-export const setup = (config: Config): Promise<void> => {
-  return new Promise((resolve, reject) => {
-    return common.setup()
-      .then(() => {
-        let contractSource = new FolderContractSource(common.abiDirectory);
-        config.contractRepo = new ContractRepository([contractSource]);
+export const setup = async (config: Config): Promise<void> => {
+  await common.setup();
 
-        config.accountAddr = "0xb8CE9ab6943e0eCED004cDe8e3bBed6568B2Fa01";
-        config.accountPriv = "0x348ce564d427a3311b6536bbcff9390d69395b06ed6c486954e971d960fe8709";
+  let contractSource = new FolderContractSource(common.abiDirectory);
+  config.contractRepo = new ContractRepository([contractSource]);
 
-        let web3Provider: any = ganache.provider({
-          network_id: web3NetId,
-          logger: web3Logger,
-          accounts: [
-            {
-              balance: "0xFFFFFFFFFFFFFFFF",
-              secretKey: config.accountPriv
-            }
-          ]
-        } as any);
+  config.accountAddr = "0xb8CE9ab6943e0eCED004cDe8e3bBed6568B2Fa01";
+  config.accountPriv = "0x348ce564d427a3311b6536bbcff9390d69395b06ed6c486954e971d960fe8709";
 
-        config.web3 = new Web3(
-          web3Provider
-        );
+  let web3Provider: any = ganache.provider({
+    network_id: web3NetId,
+    logger: web3Logger,
+    accounts: [
+      {
+        balance: "0xFFFFFFFFFFFFFFFF",
+        secretKey: config.accountPriv
+      }
+    ]
+  } as any);
 
-        return config.web3.eth.getAccounts();
-      })
-      .then((accounts) => {
-        config.accountAddr = accounts[0].toLowerCase();
-        return config.contractRepo.getContractABI(testBedContract);
-      })
-      .then((testBedABI) => {
-        // create new contract instance (not deployed yet)
-        const contract = new config.web3.eth.Contract(
-          testBedABI.abi,
-          undefined,
-          {
-            from: config.accountAddr,
-            gas: 4712388,
-            gasPrice: "100000000000"
-          }
-        );
+  config.web3 = new Web3(
+    web3Provider
+  );
 
-        // now let's deploy it to the chain and save its address
-        let bytecode = testBedABI.bytecode as string;
+  const accounts = await config.web3.eth.getAccounts();
+  config.accountAddr = accounts[0].toLowerCase();
 
-        if (!bytecode) {
-          assert.fail("Error: bytecode is null in TestBed contract");
-        }
+  const testBedContractData = await config.contractRepo.getContractABI(testBedContract);
 
-        return contract.deploy({
-          data: bytecode,
-          arguments: []
-        })
-        .send({
-          from: config.accountAddr,
-          gas: 4712388,
-          gasPrice: 100000000000
-        })
-        .on("error", (err: any) => reject(err))
-        .then((contractInstance: any) => {
-          config.contractAddress = contractInstance.options.address.toLowerCase();
-          resolve();
-        });
-      })
-      .catch(reject);
+  // create new contract instance (not deployed yet)
+  const contract = new config.web3.eth.Contract(
+    testBedContractData.abi,
+    undefined,
+    {
+      from: config.accountAddr,
+      gas: 4712388,
+      gasPrice: "100000000000"
+    }
+  );
+
+  // now Deploy onto chain
+  let bytecode = testBedContractData.bytecode as string;
+  if (!bytecode) {
+    assert.fail("Error: bytecode is null in TestBed contract");
+  }
+
+  const deployedContract = await contract.deploy({
+    data: bytecode,
+    arguments: []
+  })
+  .send({
+    from: config.accountAddr,
+    gas: 4712388,
+    gasPrice: 100000000000
   });
+
+  config.contractAddress = deployedContract.options.address.toLowerCase();
 };
