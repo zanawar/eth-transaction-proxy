@@ -1,6 +1,6 @@
 {
   "name": "eth-transaction-proxy",
-  "version": "0.1.0-preview",
+  "version": "1.0.0-preview",
   "main": "./index.js",
   "types": "./index.d.ts",
   "scripts": {
@@ -22,5 +22,10 @@
     "azure-storage": "^2.10.2",
     "find": "^0.2.9",
     "web3": "1.0.0-beta.36"
+  },
+  "license" : "MIT",
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/zanawar/eth-transaction-proxy.git"
   }
 }

@@ -38,6 +38,8 @@ let payload = await proxy.create({
 
 ```
 
+An example implementation of the Transaction Proxy, exposed through a Web API using Azure Functions is included in the `implementation/functions` folder of the repository.
+
 # Project Structure
 - src: Transaction Proxy library source code
 - test: Code modules to test the different features of the Transaction Proxy library
