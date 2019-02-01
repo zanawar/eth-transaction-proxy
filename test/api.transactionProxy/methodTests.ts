@@ -7,6 +7,39 @@ export const MethodTests = (config: Config) => {
   const extraGas = 1000;
 
   return {
+    "constructorWithTo": {
+      "transaction": {
+        from: accountAddr,
+        to: contractAddress,
+        contractName: testBedContract,
+        method: "constructor",
+        arguments: {}
+      },
+      "signature": {
+        "inputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "constructor"
+      },
+      "inputs": [],
+      "output": ""
+    },
+    "constructor": {
+      "transaction": {
+        from: accountAddr,
+        contractName: testBedContract,
+        method: "constructor",
+        arguments: {}
+      },
+      "signature": {
+        "inputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "constructor"
+      },
+      "inputs": [],
+      "output": ""
+    },
     "addAddressMapping": {
       "transaction": {
         from: accountAddr,

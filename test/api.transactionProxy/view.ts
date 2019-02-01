@@ -15,24 +15,21 @@ export const test = (config: Config) => {
       methodTests = MethodTests(config);
     });
 
-    const verifyView = (methodTest: any): Promise<any> => {
-      return new Promise((resolve, reject) => {
-        let transaction = methodTest.transaction;
-        let expected = methodTest.output;
-        // Setup IViewConfig
-        let viewConfig: IViewConfig = {
-          to: transaction.to,
-          from: transaction.from,
-          contractName: transaction.contractName,
-          method: transaction.method,
-          arguments: transaction.arguments
-        };
+    const verifyView = async (methodTest: any): Promise<any> => {
+      let transaction = methodTest.transaction;
+      let expected = methodTest.output;
+      
+      // Setup IViewConfig
+      let viewConfig: IViewConfig = {
+        to: transaction.to,
+        from: transaction.from,
+        contractName: transaction.contractName,
+        method: transaction.method,
+        arguments: transaction.arguments
+      };
 
-        proxy.view(viewConfig).then((actual: any) => {
-          assert.equal(expected, actual);
-          resolve();
-        }).catch(reject);
-      });
+      let result = await proxy.view(viewConfig);
+      assert.equal(expected, result);
     }
 
     it("verifies the getMappedBool(value) transaction completed correctly", () => {

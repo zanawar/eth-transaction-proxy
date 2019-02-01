@@ -10,10 +10,17 @@ export class TestTransaction {
   receipt: any;
 }
 
+export class ContractData {
+  bytecode!: string;
+  abi: any;
+}
+
 export class Config {
   web3!: Web3;
   proxy!: TransactionProxy;
   contractRepo!: ContractRepository;
+
+  contractData!: ContractData;
 
   accountAddr!: string;
   accountPriv!: string;
@@ -45,6 +52,7 @@ export class Config {
   getSenderAddressBalanceTest = new TestTransaction();
   testSpawnEventUintTest = new TestTransaction();
   testSpawnEventWithAddressTest = new TestTransaction();
+  constructorTest = new TestTransaction();
 };
 
 const web3Log: string[] = [];
@@ -85,6 +93,10 @@ export const setup = async (config: Config): Promise<void> => {
   config.accountAddr = accounts[0].toLowerCase();
 
   const testBedContractData = await config.contractRepo.getContractABI(testBedContract);
+  config.contractData = {
+    bytecode: testBedContractData.bytecode,
+    abi: testBedContractData.abi
+  };
 
   // create new contract instance (not deployed yet)
   const contract = new config.web3.eth.Contract(

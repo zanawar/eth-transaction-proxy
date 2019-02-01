@@ -1,7 +1,7 @@
 import "mocha";
 import * as assert from "assert";
 import { MethodTests } from "./methodTests";
-import { Config, TestTransaction } from "./setup";
+import { Config, TestTransaction, ContractData } from "./setup";
 import { testBedContract } from "../common.setup";
 
 export const test = (config: Config) => {
@@ -23,9 +23,12 @@ export const test = (config: Config) => {
       methodTests = MethodTests(config);
     });
 
-    const verifyTransactionPackage = async (transactionPackage: any, signature: any, inputs: any[]): Promise<any> => {
+    const verifyTransactionPackage = async (transactionPackage: any, signature: any, inputs: any[], isConstructor: boolean, contractData: ContractData): Promise<any> => {
       assert.equal(transactionPackage.from, accountAddr);
-      assert.equal(transactionPackage.to, contractAddress);
+      if (!isConstructor) {
+        assert.equal(transactionPackage.to, contractAddress);
+      }
+      
 
       const nonce = await web3.eth.getTransactionCount(accountAddr);
       assert.equal(transactionPackage.nonce, nonce);
@@ -33,15 +36,26 @@ export const test = (config: Config) => {
       const gasPrice = await web3.eth.getGasPrice();
       assert.equal(transactionPackage.gasPrice, gasPrice);
 
-      const data = await web3.eth.abi.encodeFunctionCall(signature, inputs);
+      let data: any;
+      if (isConstructor) {
+        const contract = new web3.eth.Contract(contractData.abi);
+        const deployObject = contract.deploy({
+          data: contractData.bytecode,
+          arguments: inputs
+        });
+        data = deployObject.encodeABI();
+      } else {
+        data = await web3.eth.abi.encodeFunctionCall(signature, inputs);
+      }
       assert.equal(transactionPackage.data, data);
+      
 
       const tx = {
         from: accountAddr,
-        to: contractAddress,
+        to: isConstructor ? null : contractAddress,
         data: data
       };
-      const gasLimit = web3.eth.estimateGas(tx);
+      const gasLimit = await web3.eth.estimateGas(tx);
 
       if (transactionPackage.gasLimit > gasLimit) {
         assert.equal(transactionPackage.gasLimit, gasLimit + extraGas);
@@ -52,15 +66,35 @@ export const test = (config: Config) => {
       return transactionPackage;
     }
 
-    const runTest = async (method: any, test: TestTransaction) => {
-      const transactionPackage = await proxy.create(method.transaction);
-      const signature = method.signature;
-      const inputs = method.inputs;
+    const runTest = async (testDefinition: any, results: TestTransaction) => {
+      const isConstructor = testDefinition.transaction.method === "constructor";
+      const transactionPackage = await proxy.create(testDefinition.transaction);
+      const signature = testDefinition.signature;
+      const inputs = testDefinition.inputs;
+      const contractData = config.contractData;
 
-      await verifyTransactionPackage(transactionPackage, signature, inputs);
+      await verifyTransactionPackage(transactionPackage, signature, inputs, isConstructor, contractData);
 
-      test.package = transactionPackage;
+      results.package = transactionPackage;
     }
+
+    it("constructor() transaction fails when passing in a 'to' address.", async () => {
+      let failed = false;
+      try {
+        await runTest(methodTests.constructorWithTo, config.constructorTest);
+      } catch {
+        failed = true;
+      }
+
+      if (!failed) {
+        assert.fail("Should have failed");
+      }
+      
+    });
+    
+    it("constructor() transaction created successfully", () => {
+      return runTest(methodTests.constructor, config.constructorTest);
+    });
 
     it("addAddressMapping(addr, str) transaction created successfully", () => {
       return runTest(methodTests.addAddressMapping, config.addAddressMappingTest);
@@ -102,10 +136,10 @@ export const test = (config: Config) => {
       return runTest(methodTests.modifybytes, config.modifybytesTest);
     });
 
-    it("testOverload(value, other) transaction created successfully", () => {
+    it("testOverload(value, other) transaction created successfully", async () => {
       let failed = false;
       try {
-        proxy.create({
+        await proxy.create({
           from: accountAddr,
           to: contractAddress,
           contractName: testBedContract,
@@ -136,7 +170,7 @@ export const test = (config: Config) => {
     it("fails when creating a transaction for a 'view' method", async () => {
       let failed = false;
       try {
-        proxy.create({
+        await proxy.create({
           from: accountAddr,
           to: contractAddress,
           contractName: testBedContract,

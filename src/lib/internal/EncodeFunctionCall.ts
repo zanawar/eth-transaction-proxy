@@ -3,6 +3,13 @@ import Web3 = require("web3");
 export function EncodeFunctionCall(web3: Web3, abi: any[], args: any, method: string): any {
   const argKeys = Object.keys(args);
   const argsCount = argKeys.length;
+  const argValues: any[] = argKeys.map((key) => args[key]);
+
+  const isConstructor = method === "constructor";
+
+  if (isConstructor) {
+    throw Error("Cannot encode a constructor (deploy) function call with this method.");
+  }
 
   // Find a function that matches the given name & argument count
   let methodDecls = abi.filter((json) => {
@@ -40,6 +47,5 @@ export function EncodeFunctionCall(web3: Web3, abi: any[], args: any, method: st
     );
   }
 
-  const values = argKeys.map((key) => args[key]);
-  return web3.eth.abi.encodeFunctionCall(methodDecl, values);
+  return web3.eth.abi.encodeFunctionCall(methodDecl, argValues);
 }

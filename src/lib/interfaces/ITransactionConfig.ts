@@ -1,6 +1,6 @@
 export interface ITransactionConfig {
   from: string;
-  to: string;
+  to?: string;
   contractName: string;
   method: string;
   arguments: any;

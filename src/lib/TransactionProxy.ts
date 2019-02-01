@@ -3,8 +3,10 @@ import { IProxyConfig } from "./interfaces/IProxyConfig";
 import { ITransactionConfig } from "./interfaces/ITransactionConfig";
 import { IViewConfig } from "./interfaces/IViewConfig";
 import { EncodeFunctionCall } from "./internal/EncodeFunctionCall";
+import { EncodeConstructorCall } from "./internal/EncodeConstructorCall";
 import Web3 = require("web3");
 import { TransactionReceipt } from "web3/types";
+import { Tx } from "web3/eth/types";
 const isAddress = Web3.utils.isAddress;
 
 export class TransactionProxy {
@@ -53,8 +55,18 @@ export class TransactionProxy {
       throw Error("No Contract Repo has been set for the Transaction Proxy.");
     }
 
-    if (!isAddress(config.from) || !isAddress(config.to)) {
-      throw Error(`'from' and 'to' fields must be valid addresses.`);
+    const isConstructor = config.method === "constructor";
+
+    if (!isConstructor) {
+      if (config.to == null || !isAddress(config.to)) {
+        throw Error("The 'to' address field must be a valid address unless the 'method' is 'constructor'.");
+      }
+    } else if (config.to != null) {
+      throw Error("No 'to' address should be passed in when 'method' = 'constructor'.");
+    }
+
+    if (!isAddress(config.from)) {
+      throw Error(`'from' must be a valid addresses.`);
     }
 
     const abi = await this.contractRepo.getContractABI(config.contractName);
@@ -63,24 +75,36 @@ export class TransactionProxy {
     }
 
     const abiDesc = abi.abi as any[];
-    const deployedCode = abi.deployedBytecode as string;
+
+    let bytecode: string;
+    if (isConstructor) {
+      bytecode = EncodeConstructorCall(this.web3, abiDesc, config.arguments, abi.bytecode);
+    } else {
+      bytecode = EncodeFunctionCall(this.web3, abiDesc, config.arguments, config.method);
+    }
+
     const tx = {
       from: config.from,
-      to: config.to,
-      data: EncodeFunctionCall(this.web3, abiDesc, config.arguments, config.method),
-    };
+      data: bytecode,
+      to: config.to, // May be null
+    } as Tx;
 
     let txNonce;
     let txGasPrice;
     let txGasLimit;
 
-    // If web3 has a provider we can check to see if the contract at the address given is the contract we're expecting
     if (this.web3.currentProvider) {
+      // If web3 has a provider we can get nonce, gas price, limit, and more
 
-      // Verify that the 'to' address is actually the contract
-      const contractCode = await this.web3.eth.getCode(tx.to);
-      if (deployedCode !== contractCode) {
-        throw Error(`Contract at address '${config.to}' is not of type '${config.contractName}'`);
+      if (!isConstructor && tx.to != null) {
+        // Check to see if the 'to' address is actually the contract we want
+        const deployedCode = abi.deployedBytecode as string;
+
+        // Verify that the 'to' address is actually the contract
+        const contractCode = await this.web3.eth.getCode(tx.to);
+        if (deployedCode !== contractCode) {
+          throw Error(`Contract at address '${config.to}' is not of type '${config.contractName}'`);
+        }
       }
 
       txNonce = await this.web3.eth.getTransactionCount(config.from);

@@ -4,6 +4,7 @@ export const abiDirectory: string = "./contracts";
 export const migrationContract: string = "Migrations";
 export const testBedContract: string = "TestBed";
 
+
 export const setup = (): Promise<void> => {
   return new Promise((resolve, reject) => {
     const doesExist = fs.existsSync(exports.abiDirectory);
