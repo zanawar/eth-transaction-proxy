@@ -3,7 +3,7 @@ import Web3 = require("web3");
 import * as ganache from "ganache-core";
 import * as common from "../common.setup";
 import { testBedContract } from "../common.setup";
-import { TransactionProxy, ContractRepo, FolderContractSource } from "eth-transaction-proxy";
+import { TransactionProxy, ContractRepository, FolderContractSource } from "eth-transaction-proxy";
 
 export class TestTransaction {
   package: any;
@@ -13,7 +13,7 @@ export class TestTransaction {
 export class Config {
   web3!: Web3;
   proxy!: TransactionProxy;
-  contractRepo!: ContractRepo;
+  contractRepo!: ContractRepository;
 
   accountAddr!: string;
   accountPriv!: string;
@@ -62,7 +62,7 @@ export const setup = (config: Config): Promise<void> => {
     return common.setup()
       .then(() => {
         let contractSource = new FolderContractSource(common.abiDirectory);
-        config.contractRepo = new ContractRepo([contractSource]);
+        config.contractRepo = new ContractRepository([contractSource]);
 
         config.accountAddr = "0xb8CE9ab6943e0eCED004cDe8e3bBed6568B2Fa01";
         config.accountPriv = "0x348ce564d427a3311b6536bbcff9390d69395b06ed6c486954e971d960fe8709";

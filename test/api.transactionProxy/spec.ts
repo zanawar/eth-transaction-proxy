@@ -5,7 +5,7 @@ import { Config } from "./setup";
 import * as create from "./create";
 import * as submit from "./submit";
 import * as view from "./view";
-import { TransactionProxy } from "eth-transaction-proxy";
+import { TransactionProxy, IProxyConfig } from "eth-transaction-proxy";
 
 let config = new Config();
 
@@ -27,7 +27,11 @@ describe("TransactionProxy", () => {
 
     it("Can be constructed with a web3 instance", () => {
       return new Promise(async (resolve, reject) => {
-        config.proxy = new TransactionProxy(contractRepo, undefined, web3);
+        let proxyConfig = {
+          sources: contractRepo.getSources(),
+          web3: web3
+        } as IProxyConfig;
+        config.proxy = new TransactionProxy(proxyConfig);
         let connected = await config.proxy.testConnection()
         if (!connected) {
           reject();
@@ -39,7 +43,9 @@ describe("TransactionProxy", () => {
     });
 
     it("Can be constructed with just an RPC endpoint", async () => {
-      new TransactionProxy(undefined, "foo");
+      new TransactionProxy({
+        rpcUrl: "foo"
+      } as IProxyConfig);
     });
   });
 
@@ -52,14 +58,18 @@ describe("TransactionProxy", () => {
     });
 
     it("fails when the rpc endpoint is invalid", async () => {
-      let proxy = new TransactionProxy(undefined, "foo", undefined);
+      let proxy = new TransactionProxy({
+        rpcUrl: "foo"
+      } as IProxyConfig);
       if (await proxy.testConnection()) {
         assert.fail("Should have failed!");
       }
     });
 
-    it("succeeds when the rpc endpoint is valid", async () => {
-      let proxy = new TransactionProxy(undefined, undefined, web3);
+    it("succeeds with a valid web3 instance", async () => {
+      let proxy = new TransactionProxy({
+        web3: web3
+      } as IProxyConfig);
       if (!await proxy.testConnection()) {
         assert.fail("Should have passed!");
       }

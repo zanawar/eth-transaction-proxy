@@ -19,7 +19,7 @@
 - Functions
   - Use notary api source locally instead of via NPM package
   - more error handling in functions to better understand what's going wrong
-  - investigate ABI caching (move new ContractRepo outside exports?)
+  - investigate ABI caching (move new ContractRepository outside exports?)
     - how would this handle threading, no locks
 
 - standard OS stuff

@@ -11,9 +11,9 @@ Included in this repository is an implementation of the library, exposed as a We
 ## Example Usage
 Using the library in your own code may look like:
 ```ts
-import { AzureBlobContractSource, ContractRepo, TransactionProxy } from "eth-transaction-proxy";
+import { AzureBlobContractSource, ContractRepository, TransactionProxy } from "eth-transaction-proxy";
 
-const contractRepository = new ContractRepo([
+const contractRepository = new ContractRepository([
   new AzureBlobContractSource("connection-string", "container")
 ]);
 const proxy = new TransactionProxy(contractRepostiory, "rpc_endpoint")

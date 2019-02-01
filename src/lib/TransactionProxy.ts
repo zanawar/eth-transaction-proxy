@@ -1,4 +1,5 @@
-import { ContractRepo } from "./ContractRepo";
+import { ContractRepository } from "./ContractRepository";
+import { IProxyConfig } from "./interfaces/IProxyConfig";
 import { ITransactionConfig } from "./interfaces/ITransactionConfig";
 import { IViewConfig } from "./interfaces/IViewConfig";
 import { EncodeFunctionCall } from "./internal/EncodeFunctionCall";
@@ -6,23 +7,28 @@ import Web3 = require("web3");
 import { TransactionReceipt } from "web3/types";
 const isAddress = Web3.utils.isAddress;
 
-// TODO: Support querying an address for the ABI, instead of using ABI files
-// // we should support using an address in the ABI file, or being given one.
-
-// TODO: Support creating a TransactionProxy without a ContractRepo, that way
-// // you don't have to create one if you're just submitting a transaction.
-
 export class TransactionProxy {
-  private contractRepo: ContractRepo | undefined;
+  private contractRepo: ContractRepository | undefined;
   private web3: Web3;
 
-  constructor(contractRepo?: ContractRepo, rpcUrl?: string, web3?: Web3) {
-    this.contractRepo = contractRepo;
+  constructor(config?: IProxyConfig) {
+    if (config == null) {
+      this.web3 = new Web3();
+      return;
+    }
 
-    if (web3) {
-      this.web3 = web3;
-    } else if (rpcUrl) {
-      this.web3 = new Web3(new Web3.providers.HttpProvider(rpcUrl));
+    if (config.sources != null) {
+      this.contractRepo = new ContractRepository(config.sources);
+    }
+
+    if (config.web3 && config.rpcUrl) {
+      throw Error("Configuration includes both web3 instance and rpcUrl. One but not both can be provided.");
+    }
+
+    if (config.web3) {
+      this.web3 = config.web3;
+    } else if (config.rpcUrl) {
+      this.web3 = new Web3(new Web3.providers.HttpProvider(config.rpcUrl));
     } else {
       this.web3 = new Web3();
     }

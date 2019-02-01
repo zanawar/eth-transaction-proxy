@@ -2,10 +2,10 @@ import "mocha";
 import * as assert from "assert";
 import {assertThrowsAsync} from "../helpers/asyncthrow";
 import * as setup from "./setup";
-import { ContractRepo } from "eth-transaction-proxy";
+import { ContractRepository } from "eth-transaction-proxy";
 import { ContractCache } from "eth-transaction-proxy/lib/internal/ContractCache"; 
 
-export class TestContractRepo extends ContractRepo {
+export class TestContractRepository extends ContractRepository {
   public getCacheInternal(): ContractCache {
     return this.cache;
   }
@@ -15,21 +15,21 @@ before("Setting up contract sources for test...", () => {
   setup.createSources();
 });
 
-describe("ContractRepo", () => {
-  let contractRepoS0: ContractRepo;
-  let contractRepoS1: ContractRepo;
-  let contractRepoAll : ContractRepo;
+describe("ContractRepository", () => {
+  let contractRepoS0: ContractRepository;
+  let contractRepoS1: ContractRepository;
+  let contractRepoAll : ContractRepository;
 
   before(() => {
-    contractRepoS0 = new ContractRepo();
-    contractRepoS1 = new ContractRepo([
+    contractRepoS0 = new ContractRepository();
+    contractRepoS1 = new ContractRepository([
       setup.ContractSources[0]
     ]);
-    contractRepoAll = new ContractRepo(setup.ContractSources);
+    contractRepoAll = new ContractRepository(setup.ContractSources);
   });
 
   describe("constructor", () => {
-    let contractRepoS3: ContractRepo;
+    let contractRepoS3: ContractRepository;
 
     it("succeeds with 0 source locations", () => {
       assert.equal(contractRepoS0.getSources().length, 0);
@@ -40,7 +40,7 @@ describe("ContractRepo", () => {
     });
 
     it("succeeds with 3 source locations", () => {
-      contractRepoS3 = new ContractRepo([
+      contractRepoS3 = new ContractRepository([
         setup.ContractSources[0],
         setup.ContractSources[1],
         setup.ContractSources[2]
@@ -84,10 +84,10 @@ describe("ContractRepo", () => {
   });
 
   describe(".precache()", () => {
-    let contractRepoMultiple : TestContractRepo;
+    let contractRepoMultiple : TestContractRepository;
 
     before(() => {
-      contractRepoMultiple = new TestContractRepo(setup.ContractSources);
+      contractRepoMultiple = new TestContractRepository(setup.ContractSources);
     });
 
     it("should fail when 0 sources are present", async () => {
@@ -101,7 +101,7 @@ describe("ContractRepo", () => {
     });
 
     it("should cache all contracts from a single source", async () => {
-      let contractRepoSingle = new TestContractRepo([setup.ContractSources[0]]);
+      let contractRepoSingle = new TestContractRepository([setup.ContractSources[0]]);
 
       await contractRepoSingle.precache();
       const cache = contractRepoSingle.getCacheInternal();

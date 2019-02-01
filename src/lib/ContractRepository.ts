@@ -4,7 +4,7 @@ import { ContractCache } from "./internal/ContractCache";
 
 export type QueryCallback = (contract: IContract) => any;
 
-export class ContractRepo {
+export class ContractRepository {
   protected cache: ContractCache = new ContractCache();
   protected sources: IContractSource[] = [ ];
 

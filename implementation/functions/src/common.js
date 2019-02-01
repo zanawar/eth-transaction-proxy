@@ -1,4 +1,5 @@
 const api = require("eth-transaction-proxy");
+import { TransactionProxy, AzureBlobContractSource } from "eth-transaction-proxy";
 
 const rpcUrl = process.env["RPC_URL"];
 const blobConnectStr = process.env["BLOB_CONNECT_STR"];
@@ -29,7 +30,7 @@ module.exports.createAzureBlobContractSource = (context) => {
       throw new Error("BLOB_CONTAINER_NAME not set.");
     }
 
-    return new api.AzureBlobContractSource(blobConnectStr, blobContainerName);
+    return new AzureBlobContractSource(blobConnectStr, blobContainerName);
   } catch (e) {
     context.log(e.message);
     context.res = {
@@ -42,35 +43,18 @@ module.exports.createAzureBlobContractSource = (context) => {
 
 module.exports.createProxy = async (context) => {
   try {
-    return await Promise((resolve, reject) => {
+    const AzureBlobContractSource = createAzureBlobContractSource(context);
 
-      let AzureBlobContractSource = createAzureBlobContractSource(context);
-      if (AzureBlobContractSource === undefined) {
-        return;
-      }
-
-      if (!rpcUrl) {
-        reject(new Error("Configuration Error: RPC_URL not set."));
-      }
-
-      const contractRepo = new ContractRepo([
-        AzureBlobContractSource
-      ]);
-
-      // Create the TransactionProxy
-      const proxy = new api.TransactionProxy(contractRepo, rpcUrl, undefined, (connected, web3) => {
-        connected.then((success) => {
-          if (success) {
-            resolve(proxy);
-          } else {
-            reject(new Error("Failed to create Transaction Proxy"));
-          }
-        })
-        .catch((err) => {
-          reject(err);
-        });
-      });
+    if (!rpcUrl) {
+      reject(new Error("Configuration Error: RPC_URL not set."));
+    }
+    
+    const proxy = new TransactionProxy({
+      sources: [AzureBlobContractSource],
+      rpcUrl: rpcUrl
     });
+
+    return proxy;
   } catch (e) {
     context.res = {
       status: 500,
