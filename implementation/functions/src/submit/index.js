@@ -25,15 +25,20 @@ module.exports = async (context, req) => {
     return;
   }
 
-  let proxy = await common.createProxy(context);
+  let proxy = common.createProxy(context);
+  if (!proxy) {
+    return;
+  }
+  
   let receipt;
   try {
-    receipt = await proxy.submitTransaction(rawTransaction);
-  } catch (error) {
+    receipt = await proxy.submit(rawTransaction);
+  } catch (e) {
     context.res = {
       status: 400,
       body: e.message
     };
+    return;
   }
 
   context.res = {

@@ -4,7 +4,7 @@
   "main": "./index.js",
   "types": "./index.d.ts",
   "scripts": {
-    "tslint": "tslint -p . -c tslint.json --exclude examples/**/*.ts --exclude tests/**/*.ts",
+    "tslint": "tslint -p . -c tslint.json",
     "tsc": "tsc --skipLibCheck",
     "build": "npm run tslint && npm run tsc && node ./tools/copy-distribution-files.js"
   },

@@ -18,9 +18,6 @@ WORKDIR /usr/proxy/src/
 RUN npm install --unsafe-perm
 RUN npm run build --unsafe-perm
 
-WORKDIR /usr/proxy/bin/eth-transaction-proxy/
-RUN ls
-
 COPY ./implementation/functions/src/ /home/site/wwwroot
 
 WORKDIR /home/site/wwwroot/

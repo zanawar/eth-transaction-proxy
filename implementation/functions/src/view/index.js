@@ -29,6 +29,11 @@ module.exports = async (context, req) => {
     transContract = common.getProperty(req, "contractName");
     transMethod = common.getProperty(req, "method");
     transArguments = common.getProperty(req, "arguments");
+
+    if (transArguments == null) {
+      transArguments = {};
+    }
+    
   } catch (e) {
     context.log(e.message);
     context.res = {
@@ -38,10 +43,14 @@ module.exports = async (context, req) => {
     return;
   }
   
-  let proxy = await common.createProxy(context);
+  let proxy = common.createProxy(context);
+  if (!proxy) {
+    return;
+  }
+
   let transaction;
   try {
-    transaction = await proxy.submitView({
+    transaction = await proxy.view({
       to: transTo,
       from: transFrom,
       contractName: transContract,
@@ -49,11 +58,12 @@ module.exports = async (context, req) => {
       arguments: transArguments
     });
   }
-  catch (error) {
+  catch (e) {
     context.res = {
       status: 400,
       body: e.message
     }
+    return;
   }
 
   context.res = {
