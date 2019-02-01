@@ -1,9 +1,8 @@
-import { Config } from "./setup";
 import { testBedContract } from "../common.setup";
 
-export const MethodTests = (config: Config) => {
-  let accountAddr = config.accountAddr;
-  let contractAddress = config.contractAddress;
+export const MethodTests = () => {
+  let accountAddr = "0xb8CE9ab6943e0eCED004cDe8e3bBed6568B2Fa01";
+  let contractAddress = "0xb8CE9ab6943e0eCED004cDe8e3bBed6568B2Fa01";
   const extraGas = 1000;
 
   return {
@@ -22,7 +21,9 @@ export const MethodTests = (config: Config) => {
         "type": "constructor"
       },
       "inputs": [],
-      "output": ""
+      "output": "",
+      "fails": true,
+      "desc": "when passing a 'to' address."
     },
     "constructor": {
       "transaction": {
@@ -89,7 +90,7 @@ export const MethodTests = (config: Config) => {
       "inputs": [
         "0x1234567890123456789012345678901234567891"
       ],
-      "output": "some text"
+      "output": "something important"
     },
     "updateStructText": {
       "transaction": {
@@ -230,7 +231,7 @@ export const MethodTests = (config: Config) => {
       },
       "inputs": [
       ],
-      "output": -8
+      "output": "-8"
     },
     "modifyint256": {
       "transaction": {
@@ -239,7 +240,7 @@ export const MethodTests = (config: Config) => {
         contractName: testBedContract,
         method: "modifyint256",
         arguments: {
-          value: -9000000
+          value: "-9000000"
         }
       },
       "signature": {
@@ -257,7 +258,7 @@ export const MethodTests = (config: Config) => {
         "type": "function"
       },
       "inputs": [
-        -9000000
+        "-9000000"
       ],
       "output": ""
     },
@@ -383,7 +384,7 @@ export const MethodTests = (config: Config) => {
       "inputs": [
         "0x2"
       ],
-      "output": "0x2"
+      "output": ""
     },
     "getbytes1": {
       "transaction": {
@@ -396,7 +397,7 @@ export const MethodTests = (config: Config) => {
       },
       "inputs": [
       ],
-      "output": "0x2"
+      "output": "0x02"
     },
     "modifybytes32": {
       "transaction": {
@@ -426,19 +427,19 @@ export const MethodTests = (config: Config) => {
       ],
       "output": ""
     },
-    "getbytes32": {
-      "transaction": {
-        from: accountAddr,
-        to: contractAddress,
-        contractName: testBedContract,
-        method: "getbytes32",
-        arguments: {
-        }
-      },
-      "inputs": [
-      ],
-      "outputs": "0xFFFF"
-    },
+    // "getbytes32": {
+    //   "transaction": {
+    //     from: accountAddr,
+    //     to: contractAddress,
+    //     contractName: testBedContract,
+    //     method: "getbytes32",
+    //     arguments: {
+    //     }
+    //   },
+    //   "inputs": [
+    //   ],
+    //   "outputs": "0xFFFF"
+    // },
     "modifybytes": {
       "transaction": {
         from: accountAddr,
@@ -465,7 +466,7 @@ export const MethodTests = (config: Config) => {
       },
       "inputs": ["0xFA2345"
       ],
-      "outputs": ""
+      "output": ""
     },
     "getRandomBytes": {
       "transaction": {
@@ -496,31 +497,6 @@ export const MethodTests = (config: Config) => {
       ],
       "output": ""
     },
-    "getSenderAddressBalance": {
-      "transaction": {
-        from: accountAddr,
-        to: contractAddress,
-        contractName: testBedContract,
-        method: "getSenderAddressBalance",
-        arguments: {
-        }
-      },
-      "inputs": [
-      ],
-      "output": accountAddr
-    },
-    "testOverload": {
-      "transaction": {
-        from: accountAddr,
-        to: contractAddress,
-        contractName: testBedContract,
-        method: "testOverload",
-        arguments: {
-          value: 8,
-          other: 9
-        }
-      }
-    },
     "testSpawnEventUint": {
       "transaction": {
         from: accountAddr,
@@ -545,8 +521,7 @@ export const MethodTests = (config: Config) => {
         "stateMutability": "nonpayable",
         "type": "function"
       },
-      "inputs": [665
-      ],
+      "inputs": [665],
       "output": ""
     },
     "testSpawnEventWithAddress": {

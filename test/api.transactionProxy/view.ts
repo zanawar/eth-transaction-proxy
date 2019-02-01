@@ -1,23 +1,20 @@
 import "mocha";
 import * as assert from "assert";
 import { Config } from "./setup";
-import { MethodTests } from "./methodTests";
 import { IViewConfig} from "eth-transaction-proxy/lib/interfaces/IViewConfig";
 
 export const test = (config: Config) => {
   describe("view(config)", () => {
 
     let proxy: any;
-    let methodTests: any;
 
     before("initialize helper variables...", () => {
       proxy = config.proxy;
-      methodTests = MethodTests(config);
     });
 
     const verifyView = async (methodTest: any): Promise<any> => {
       let transaction = methodTest.transaction;
-      let expected = methodTest.output;
+      let expected = "\"" + methodTest.output + "\"";
       
       // Setup IViewConfig
       let viewConfig: IViewConfig = {
@@ -32,48 +29,60 @@ export const test = (config: Config) => {
       assert.equal(expected, result);
     }
 
-    it("verifies the getMappedBool(value) transaction completed correctly", () => {
-      verifyView(methodTests.getMappedBool);
-    });
+    const defineViewTest = (testName: string) => {
+      const testResult = config.transactionResults.get(testName);
+      const testDefinition = config.getTestMethod(testName);
 
-    it("verifies the getBool() transaction completed correctly", () => {
-      verifyView(methodTests.getBool);
-    });
+      if (testResult == null) {
+        throw Error("No matching test result for test '" + testName + "'");
+      }
+      const shouldFail = testDefinition.fails || false;
 
-    it("verifies the getint8() transaction completed correctly", () => {
-      verifyView(methodTests.getint8);
-    });
+      let testDescription = testDefinition.transaction.method + "(";
+      if (testDefinition.output == "") {
+        return; // not a view
+      }
 
-    it("verifies the getint256(value) transaction completed correctly", () => {
-      verifyView(methodTests.getint256);
-    });
+      const methodInputs = testDefinition.inputs;
+      if (methodInputs.length > 0) {
+        for (let i = 0; i < methodInputs.length; i++) {
+          testDescription += methodInputs[i]
+          if (i + 1 != methodInputs.length) {
+            testDescription += ", ";
+          }
+        }
+      }
+      testDescription += ") view " + (shouldFail ? "fails " : "");
 
-    it("verifies the getuint8() transaction completed correctly", () => {
-      verifyView(methodTests.getuint8);
-    });
+      if (testDefinition.desc) {
+        testDescription += "when " + testDefinition.desc;
+      }
 
-    it("verifies the getuint256() transaction completed correctly", () => {
-      verifyView(methodTests.getuint256);
-    });
+      testDescription += " [Test: " + testName + "]";
 
-    it("verifies the getbytes1() transaction completed correctly", () => {
-      verifyView(methodTests.getbytes1);
-    });
+      it(testDescription, async() => {
+        let failed = false;
+        let failReason: any;
+        let liveTestDefinition = config.getTestMethod(testName);
 
-    it("verifies the getbytes32() transaction completed correctly", () => {
-      verifyView(methodTests.getbytes32);
-    });
+        try {
+          await verifyView(liveTestDefinition);
+        } catch (e) {
+          failed = true;
+          failReason = e;
+        }
 
-    it("verifies the getRandomBytes() transaction completed correctly", () => {
-      verifyView(methodTests.getRandomBytes);
-    });
+        if (shouldFail && !failed) {
+          assert.fail("Should have failed.");
+        } else if (!shouldFail && failed) {
+          throw failReason;
+        }
+        
+      });
+    }
 
-    it("verifies the getArbitraryAddressBalance(addr) transaction completed correctly", () => {
-      verifyView(methodTests.getArbitraryAddressBalance);
-    });
-
-    it("verifies the getSenderAddressBalance() transaction completed correctly", () => {
-      verifyView(methodTests.getSenderAddressBalance);
+    Object.keys(config.testMethods).forEach(key => {
+      defineViewTest(key);
     });
   });
 }

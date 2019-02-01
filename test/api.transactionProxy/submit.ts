@@ -31,7 +31,12 @@ export const test = (config: Config) => {
     }
 
     it("fails when transaction is corrupted", async () => {
-      let signedTx = await web3.eth.accounts.signTransaction(config.addAddressMappingTest.package, accountPriv);
+      let result = config.transactionResults.get("modifyuint8");
+      if (result == null) {
+        throw Error("Couldn't find package from modifyuint8");
+      }
+
+      let signedTx = await web3.eth.accounts.signTransaction(result.package, accountPriv);
       signedTx.rawTransaction = signedTx.rawTransaction.replace("4", "2");
 
       let failed = false;
@@ -47,8 +52,13 @@ export const test = (config: Config) => {
     });
 
     it("fails when signature is incorrect", async () => {
+      let result = config.transactionResults.get("modifyuint8");
+      if (result == null) {
+        throw Error("Couldn't find package from modifyuint8");
+      }
+
       const privateKey = accountPriv.replace("2", "A");
-      const signedTx = await web3.eth.accounts.signTransaction(config.addAddressMappingTest.package, privateKey);
+      const signedTx = await web3.eth.accounts.signTransaction(result.package, privateKey);
 
       let failed = false;
       try {
@@ -62,53 +72,40 @@ export const test = (config: Config) => {
       }
     });
 
-    it("successfully submits the addAddressMapping(addr, str) transaction", () => {
-      return testTransaction(config.addAddressMappingTest);
-    });
+    const defineSubmitTest = (testName: string) => {
+      const testResult = config.transactionResults.get(testName);
+      const testDefinition = config.getTestMethod(testName);
 
-    it("successfully submits the updateStructText(sometext) transaction", () => {
-      return testTransaction(config.updateStructureTextTest);
-    });
+      if (testResult == null) {
+        throw Error("No matching test result for test '" + testName + "'");
+      }
+      const shouldFail = testDefinition.fails || false;
 
-    it("successfully submits the modifyBool(value) transaction", () => {
-      return testTransaction(config.modifyBoolTest);
-    });
+      let testDescription = testDefinition.transaction.method + "(";
+      if (testDefinition.signature == null || testDefinition.output != "" || shouldFail) {
+        return; // view
+      }
 
-    it("successfully submits the modifyint8(value) transaction", () => {
-      return testTransaction(config.modifyint8Test);
-    });
+      const methodInputs = testDefinition.signature.inputs;
+      if (methodInputs.length > 0) {
+        for (let i = 0; i < methodInputs.length; i++) {
+          testDescription += methodInputs[i].type
+          if (i + 1 != methodInputs.length) {
+            testDescription += ", ";
+          }
+        }
+      }
+      testDescription += ") transaction payload successfully submitted.";
 
-    it("successfully submits the modifyint256(value) transaction", () => {
-      return testTransaction(config.modifyint256Test);
-    });
+      testDescription += " [Test: " + testName + "]";
 
-    it("successfully submits the modifyuint8(value) transaction", () => {
-      return testTransaction(config.modifyuint8Test);
-    });
+      it(testDescription, async() => {
+        await testTransaction(testResult);
+      });
+    }
 
-    it("successfully submits the modifyuint256(value) transaction", () => {
-      return testTransaction(config.modifyuint256Test);
+    Object.keys(config.testMethods).forEach(key => {
+      defineSubmitTest(key);
     });
-
-    it("successfully submits the modifybytes1(value) transaction", () => {
-      return testTransaction(config.modifybytes1Test);
-    });
-
-    it("successfully submits the modifybytes32(value) transaction", () => {
-      return testTransaction(config.modifybytes32Test);
-    });
-
-    it("successfully submits the modifybytes(value) transaction", () => {
-      return testTransaction(config.modifybytesTest);
-    });
-
-    it("successfully submits the testSpawnEventUint(value) transaction", () => {
-      return testTransaction(config.testSpawnEventUintTest);
-    });
-
-    it("successfully submits the testSpawnEventWithAddress() transaction", () => {
-      return testTransaction(config.testSpawnEventWithAddressTest);
-    });
-
   });
 }

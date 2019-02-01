@@ -1,6 +1,5 @@
 import "mocha";
 import * as assert from "assert";
-import { MethodTests } from "./methodTests";
 import { Config, TestTransaction, ContractData } from "./setup";
 import { testBedContract } from "../common.setup";
 
@@ -13,14 +12,12 @@ export const test = (config: Config) => {
     let proxy: any;
     let accountAddr: string;
     let contractAddress: string;
-    let methodTests: any;
 
     before("intialize helper variables...", () => {
       web3 = config.web3;
       proxy = config.proxy;
       accountAddr = config.accountAddr;
       contractAddress = config.contractAddress;
-      methodTests = MethodTests(config);
     });
 
     const verifyTransactionPackage = async (transactionPackage: any, signature: any, inputs: any[], isConstructor: boolean, contractData: ContractData): Promise<any> => {
@@ -78,62 +75,60 @@ export const test = (config: Config) => {
       results.package = transactionPackage;
     }
 
-    it("constructor() transaction fails when passing in a 'to' address.", async () => {
-      let failed = false;
-      try {
-        await runTest(methodTests.constructorWithTo, config.constructorTest);
-      } catch {
-        failed = true;
+    const defineCreateTest = (testName: string) => {
+      const testResult = config.transactionResults.get(testName);
+      const testDefinition = config.getTestMethod(testName);
+
+      if (testResult == null) {
+        throw Error("No matching test result for test '" + testName + "'");
+      }
+      const shouldFail = testDefinition.fails || false;
+
+      let testDescription = testDefinition.transaction.method + "(";
+      if (testDefinition.signature == null || testDefinition.output != "") {
+        return; // view
       }
 
-      if (!failed) {
-        assert.fail("Should have failed");
+      const methodInputs = testDefinition.signature.inputs;
+      if (methodInputs.length > 0) {
+        for (let i = 0; i < methodInputs.length; i++) {
+          testDescription += methodInputs[i].type
+          if (i + 1 != methodInputs.length) {
+            testDescription += ", ";
+          }
+        }
       }
-      
-    });
-    
-    it("constructor() transaction created successfully", () => {
-      return runTest(methodTests.constructor, config.constructorTest);
-    });
+      testDescription += ") transaction " + (shouldFail ? "fails " : "creates successfully ");
 
-    it("addAddressMapping(addr, str) transaction created successfully", () => {
-      return runTest(methodTests.addAddressMapping, config.addAddressMappingTest);
-    });
+      if (testDefinition.desc) {
+        testDescription += "when " + testDefinition.desc;
+      }
 
-    it("updateStructText(context) transaction created successfully", () => {
-      return runTest(methodTests.updateStructText, config.updateStructureTextTest);
-    });
+      testDescription += " [Test: " + testName + "]";
 
-    it("modifyBool() transaction created successfully", () => {
-      return runTest(methodTests.modifyBool, config.modifyBoolTest);
-    });
+      it(testDescription, async() => {
+        let failed = false;
+        let failReason: any;
+        let liveTestDefinition = config.getTestMethod(testName);
 
-    it("modifyint8(value) transaction created successfully", () => {
-      return runTest(methodTests.modifyint8, config.modifyint8Test);
-    });
+        try {
+          await runTest(liveTestDefinition, testResult);
+        } catch (e) {
+          failed = true;
+          failReason = e;
+        }
 
-    it("modifyint256(value) transaction created successfully", () => {
-      return runTest(methodTests.modifyint256, config.modifyint256Test);
-    });
+        if (shouldFail && !failed) {
+          assert.fail("Should have failed.");
+        } else if (!shouldFail && failed) {
+          throw failReason;
+        }
+        
+      });
+    }
 
-    it("modifyuint8(value) transaction created successfully", () => {
-      return runTest(methodTests.modifyuint8, config.modifyuint8Test);
-    });
-
-    it("modifyuint256(value) transaction created successfully", () => {
-      return runTest(methodTests.modifyuint256, config.modifyuint256Test);
-    });
-
-    it("modifybytes1(value) transaction created successfully", () => {
-      return runTest(methodTests.modifybytes1, config.modifybytes1Test);
-    });
-
-    it("modifybytes32(value) transaction created successfully", () => {
-      return runTest(methodTests.modifybytes32, config.modifybytes32Test);
-    });
-
-    it("modifybytes(value) transaction created successfully", () => {
-      return runTest(methodTests.modifybytes, config.modifybytesTest);
+    Object.keys(config.testMethods).forEach(key => {
+      defineCreateTest(key);
     });
 
     it("testOverload(value, other) transaction created successfully", async () => {
@@ -159,14 +154,6 @@ export const test = (config: Config) => {
       }
     });
 
-    it("testSpawnEventUint(value) transaction created successfully", () => {
-      return runTest(methodTests.testSpawnEventUint, config.testSpawnEventUintTest);
-    });
-
-    it("testSpawnEventWithAddress() transaction created successfully", () => {
-      return runTest(methodTests.testSpawnEventWithAddress, config.testSpawnEventWithAddressTest);
-    });
-
     it("fails when creating a transaction for a 'view' method", async () => {
       let failed = false;
       try {
@@ -188,5 +175,6 @@ export const test = (config: Config) => {
         assert.fail("Error: This shouldn't succeed");
       }
     });
+
   });
 }

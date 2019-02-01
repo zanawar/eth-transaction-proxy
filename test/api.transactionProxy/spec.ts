@@ -5,9 +5,15 @@ import { Config } from "./setup";
 import * as create from "./create";
 import * as submit from "./submit";
 import * as view from "./view";
+import { MethodTests } from "./methodTests";
 import { TransactionProxy, IProxyConfig } from "eth-transaction-proxy";
 
 let config = new Config();
+config.transactionResults = new Map<string, setup.TestTransaction>();
+config.testMethods = MethodTests();
+Object.keys(config.testMethods).forEach(key => {
+  config.transactionResults.set(key, new setup.TestTransaction());
+});
 
 before("Build contracts, standup network, setup contractRepo...", () => {
   return setup.setup(config);

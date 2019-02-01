@@ -22,9 +22,13 @@ export class Config {
 
   contractData!: ContractData;
 
+  testMethods!: any;
+
   accountAddr!: string;
   accountPriv!: string;
   contractAddress!: string;
+
+  transactionResults!: Map<string, TestTransaction>;
 
   // transaction packages
   addAddressMappingTest = new TestTransaction();
@@ -53,6 +57,17 @@ export class Config {
   testSpawnEventUintTest = new TestTransaction();
   testSpawnEventWithAddressTest = new TestTransaction();
   constructorTest = new TestTransaction();
+
+  getTestMethod = (testName: string) => {
+    const testMethod = this.testMethods[testName];
+    testMethod.transaction.from = this.accountAddr;
+
+    if (testMethod.transaction.method !== "constructor") {
+      testMethod.transaction.to = this.contractAddress;
+    }
+
+    return testMethod;
+  }
 };
 
 const web3Log: string[] = [];
