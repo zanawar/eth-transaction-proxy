@@ -4,6 +4,13 @@ The Transaction Proxy aims to abstract away smart contract interactions to help 
 * Signed Transaction Submission
 * Smart Contract Data Viewing
 
+# Getting the library
+Install using npm:
+```
+npm install eth-transaction-proxy
+```
+or download and clone from GitHub: https://github.com/zanawar/eth-transaction-proxy
+
 # Using the library
 The Transaction Proxy code is packaged as a library which can be consumed as an npm library.  
 Included in this repository is an implementation of the library, exposed as a Web API using Azure Functions for Docker.
