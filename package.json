@@ -8,7 +8,7 @@
     "build-test": "cd ./test && npm run build",
     "build-all": "npm run build && npm run build-test",
     "test": "cd ./bin/test && npm run test-all",
-    "test-ci": "cross-env TEST=test-all-ci npm run test-docker-run",
+    "test-ci": "cd ./bin/test && npm run test-all-ci",
     "test-docker": "cd ./test-docker && docker-compose up --build --abort-on-container-exit",
     "publish": "npm publish ./bin/eth-transaction-proxy"
   },
